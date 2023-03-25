@@ -79,7 +79,7 @@ def individual(fit_type, runs, i):
         textstr = '\n'.join((
         r'X2 = %.2e' % (runs[i,2], ),
         r'z0 = %.2f mm' % (runs[i,0], ),
-        r'beta = %.2e mm/W' % (runs[1],)))
+        r'beta = %.2e mm/W' % (runs[i,1],)))
     return textstr
 
 ###########################################################################
