@@ -1,7 +1,9 @@
-import dI_dz
-from intensity import intensity as I
+from z_scan.fitting_model.absorption import dI_dz
+from .intensity import intensity as I
 from scipy.integrate import solve_ivp
-############################################################
+
+#############################################################################
+
 def OPA(z, z0: float, Is1: float, L: float, ALPHA0: float, I0: float, Z_R: float):
     """ returns the normalised transmittance considering 1PA
     
@@ -19,7 +21,9 @@ def OPA(z, z0: float, Is1: float, L: float, ALPHA0: float, I0: float, Z_R: float
     I_out = sol.y[:, 0]
     transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
     return transmittance
+
 #############################################################################
+
 def TPA_no_Is1(z, z0: float, Is2: float, beta: float, L: float, ALPHA0: float, I0: float, Z_R: float):
     """ returns the normalised transmittance considering 2PA without Is1
     
@@ -38,7 +42,9 @@ def TPA_no_Is1(z, z0: float, Is2: float, beta: float, L: float, ALPHA0: float, I
     I_out = sol.y[:, 0]
     transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
     return transmittance
+
 ################################################################################
+
 def TPA_no_Is2(z, z0: float, Is1: float, beta: float, L: float, ALPHA0: float, I0: float, Z_R: float):
     """ returns the normalised transmittance considering 2PA without Is2
     
