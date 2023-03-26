@@ -67,7 +67,7 @@ By running the Jupyter Notebook, a text-file containing the fitted model paramet
 
 Use the following comment to install all requirements:
 
-```$ pip install -r requirements.txt```
+```pip install -r requirements.txt```
 
 This project has been created with:
 
