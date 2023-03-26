@@ -1,4 +1,21 @@
-def best(fit_type, chi2_best, p_best):
+"""Module containing:
+- best: to generate text from optimal fitting parameters
+- individual: to generate text from fitting parameters of individual runs
+- output: to generate text from optimal fitting parameters and their errorbars
+"""
+import numpy as np
+
+###################################################################################
+
+def best(fit_type: int, chi2_best: float, p_best: np.ndarray):
+    """Returns string with optimal fitting parameters
+    
+    ##PARAMETERS
+    ---
+    - fit_type: integer describing the fitting model
+    - chi2_best: optimal chi-squared
+    - p_best: optimal fitting parameters
+    """
     # 1PA
     if fit_type == 0:
         textstr = '\n'.join((
@@ -41,7 +58,16 @@ def best(fit_type, chi2_best, p_best):
 
 ##############################################################
 
-def individual(fit_type, runs, i):
+def individual(fit_type: int, runs: np.ndarray, i: int):
+    """Returns string with fitting parameters of individual runs
+    
+    ##PARAMETERS
+    ---
+    - fit_type: integer describing the fitting model
+    - runs: information of individual runs
+    - i: index of individual run
+    """
+
     # 1PA
     if fit_type == 0:
         textstr = '\n'.join((
@@ -85,6 +111,16 @@ def individual(fit_type, runs, i):
 ###########################################################################
 
 def output(fit_type, chi2_best, p_best, sigma, span):
+    """Returns string with optimal fitting parameters and optimal chi-squared
+    
+    ##PARAMETERS
+    ---
+    - fit_type: integer describing the fitting model
+    - chi2_best: optimal chi-squared
+    - p_best: optimal fitting parameters
+    - sigma: errorbar of fitting parameter
+    - span: volume in chi2-space spanned by the errorbar
+    """
     # 1PA
     if fit_type == 0:
         textstr = '\n'.join((
