@@ -3,7 +3,7 @@
 All code necessary to analyse a z-scan measurement and fit the data according to different nonlinear absorption models.
 
 ## Table of contents
-* [General info](#general-info)
+* [General information](#general-information)
 * [Parts](#parts)
     * [beam profile](#beam-profile)
     * [power measurement](#power-measurement)
@@ -11,7 +11,7 @@ All code necessary to analyse a z-scan measurement and fit the data according to
     * [z-scan fit](#z-scan-fit)
 * [Requirements](#requirements)
 
-## General info
+## General information
 
 This project has been part of my thesis for the degree of Master of Science in Nanoscience, Nanotechnology and Nanoengineering. Read the [thesis report](/documentation/thesis.pdf) for methodology of the measurment and documentation of the code.
 
@@ -65,6 +65,10 @@ By running the Jupyter Notebook, a text-file containing the fitted model paramet
 
 ## Requirements
 
+Use the following comment to install all requirements:
+
+```$ pip install -r requirements.txt```
+
 This project has been created with:
 
 * Python version: 3.8
@@ -75,5 +79,7 @@ With packages:
 * matplotlib.pyplot
 * scipy.optimize
 * sklearn.linear_model
+
+
 
 
