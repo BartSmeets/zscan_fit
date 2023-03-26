@@ -65,15 +65,15 @@ By running the Jupyter Notebook, a text-file containing the fitted model paramet
 
 ## Requirements
 
-Use the following comment to install all requirements:
-
-```pip install -r requirements.txt```
-
 This project has been created with:
 
 * Python version: 3.8
 
-With packages:
+Use the following comment to install all required packages:
+
+```pip install -r requirements.txt```
+
+required packages:
 * numpy
 * pandas
 * matplotlib.pyplot
