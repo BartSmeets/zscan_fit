@@ -1,7 +1,21 @@
 import numpy as np
 from z_scan.fitting_model.chi2_minimising import chi2
 
-def errorbar(data, fit_type, p_best, chi2_best, param_index, experiment_param):
+####################################################################################
+
+def errorbar(data: np.ndarray, fit_type: int, p_best: np.ndarray , chi2_best: float, param_index: int, experiment_param: list):
+    """ Returns the standard deviation and the volume in chi2-space that the standard deviation spans
+    
+    ## PARAMETERS
+    ---
+    - data: data structure containing the z, I and sigma information
+    - fit_type: integer to describe the model type
+    - p_best: optimal fitting parameters
+    - chi2_best: optimised chi-squared 
+    - param_index: index of the parameter of which the errorbars are to be computed
+    - experiment_param: list of experiment parameters
+    """
+    
     # Initialise datastructure
     N_POINTS = len(data[:,0])
     STEP = 0.005
@@ -61,6 +75,16 @@ def errorbar(data, fit_type, p_best, chi2_best, param_index, experiment_param):
 ##################################################################################################
 
 def compute(data, fit_type, p_best, chi2_best, experiment_param):
+    """Returns the standard deviation and the volume in chi2-space that the standard deviation spans
+    
+    ## PARAMETERS
+    ---
+    - data: data structure containing the z, I and sigma information
+    - fit_type: integer to describe the model type
+    - p_best: optimal fitting parameters
+    - chi2_best: optimised chi-squared 
+    - experiment_param: list of experiment parameters
+    """
     if fit_type==0 or fit_type==4:    # If 1PA or 2PA no sat
         SIGMA_P = np.zeros(2)
         CHI2_SPAN = np.zeros(2)

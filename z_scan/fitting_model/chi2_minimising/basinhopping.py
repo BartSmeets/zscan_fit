@@ -1,3 +1,5 @@
+"""Module for the basin hopping algorithm for the different models"""
+
 import numpy as np
 import z_scan.fitting_model.chi2_minimising.chi2 as X2
 from scipy.optimize import minimize
@@ -6,23 +8,24 @@ def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model
     
-    PARAMETERS
-    data : Data structure, of size (N, 3) where N is the number of datapoints.
+    ## PARAMETERS
+    ---
+    - data : Data structure, of size (N, 3) where N is the number of datapoints.
         [:,0]: z-data - [:, 1]: intensity-data - [:, 2]: uncertainty on intensity
-    p0 : Initial guess
+    - p0 : Initial guess
         [0]: z-position of focal point - [1]: first-order saturation intensity - [2]: second-order saturation intensity - [3]: nonlinear absorption coefficient
-    L : Sample thickness
-    ALPHA0 : Linear absorption coefficient
-    I0 : Beam intensity at the focal point
-    Z_R : Rayleigh length
-    MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
-        MAX_PERTURBATION : highest multiplication factor
-        MAX_AGE : stop-condition : maximum age of current optimal point
-        MAX_ITER: stop-condition : maxumum number of iterations
-        BOUNDS : bounds on the fitting parameters
-        T : basin hopping temperature
-        MAX_JUMP : number of consecutive jumps allowed
-        MAX_REJECT : number of rejects before jumping
+    = L : Sample thickness
+    - ALPHA0 : Linear absorption coefficient
+    - I0 : Beam intensity at the focal point
+    - Z_R : Rayleigh length
+    - MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
+        - MAX_PERTURBATION : highest multiplication factor
+        - MAX_AGE : stop-condition : maximum age of current optimal point
+        - MAX_ITER: stop-condition : maxumum number of iterations
+        - BOUNDS : bounds on the fitting parameters
+        - T : basin hopping temperature
+        - MAX_JUMP : number of consecutive jumps allowed
+        - MAX_REJECT : number of rejects before jumping
     """
     ## Basin hopping parameters
     MAX_PERTURBATION, MAX_AGE, MAX_ITER, BOUNDS, T, MAX_JUMP, MAX_REJECT = MODEL_PARAMETERS
@@ -112,23 +115,24 @@ def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without Is1
     
-    PARAMETERS
-    data : Data structure, of size (N, 3) where N is the number of datapoints.
+    ## PARAMETERS
+    ---
+    - data : Data structure, of size (N, 3) where N is the number of datapoints.
         [:,0]: z-data - [:, 1]: intensity-data - [:, 2]: uncertainty on intensity
-    p0 : Initial guess
+    - p0 : Initial guess
         [0]: z-position of focal point - [1]: second-order saturation intensity - [2]: nonlinear absorption coefficient
-    L : Sample thickness
-    ALPHA0 : Linear absorption coefficient
-    I0 : Beam intensity at the focal point
-    Z_R : Rayleigh length
-    MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
-        MAX_PERTURBATION : highest multiplication factor
-        MAX_AGE : stop-condition : maximum age of current optimal point
-        MAX_ITER: stop-condition : maxumum number of iterations
-        BOUNDS : bounds on the fitting parameters
-        T : basin hopping temperature
-        MAX_JUMP : number of consecutive jumps allowed
-        MAX_REJECT : number of rejects before jumping
+    - L : Sample thickness
+    - ALPHA0 : Linear absorption coefficient
+    - I0 : Beam intensity at the focal point
+    - Z_R : Rayleigh length
+    - MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
+        - MAX_PERTURBATION : highest multiplication factor
+        - MAX_AGE : stop-condition : maximum age of current optimal point
+        - MAX_ITER: stop-condition : maxumum number of iterations
+        - BOUNDS : bounds on the fitting parameters
+        - T : basin hopping temperature
+        - MAX_JUMP : number of consecutive jumps allowed
+        - MAX_REJECT : number of rejects before jumping
     """
     ## Basin hopping parameters
     MAX_PERTURBATION, MAX_AGE, MAX_ITER, BOUNDS, T, MAX_JUMP, MAX_REJECT = MODEL_PARAMETERS
@@ -211,23 +215,24 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without Is2
     
-    PARAMETERS
-    data : Data structure, of size (N, 3) where N is the number of datapoints.
+    ## PARAMETERS
+    ---
+    - data : Data structure, of size (N, 3) where N is the number of datapoints.
         [:,0]: z-data - [:, 1]: intensity-data - [:, 2]: uncertainty on intensity
-    p0 : Initial guess
+    - p0 : Initial guess
         [0]: z-position of focal point - [1]: first-order saturation intensity - [2]: nonlinear absorption coefficient
-    L : Sample thickness
-    ALPHA0 : Linear absorption coefficient
-    I0 : Beam intensity at the focal point
-    Z_R : Rayleigh length
-    MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
-        MAX_PERTURBATION : highest multiplication factor
-        MAX_AGE : stop-condition : maximum age of current optimal point
-        MAX_ITER: stop-condition : maxumum number of iterations
-        BOUNDS : bounds on the fitting parameters
-        T : basin hopping temperature
-        MAX_JUMP : number of consecutive jumps allowed
-        MAX_REJECT : number of rejects before jumping
+    - L : Sample thickness
+    - ALPHA0 : Linear absorption coefficient
+    - I0 : Beam intensity at the focal point
+    - Z_R : Rayleigh length
+    - MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
+        - MAX_PERTURBATION : highest multiplication factor
+        - MAX_AGE : stop-condition : maximum age of current optimal point
+        - MAX_ITER: stop-condition : maxumum number of iterations
+        - BOUNDS : bounds on the fitting parameters
+        - T : basin hopping temperature
+        - MAX_JUMP : number of consecutive jumps allowed
+        - MAX_REJECT : number of rejects before jumping
     """
     ## Basin hopping parameters
     MAX_PERTURBATION, MAX_AGE, MAX_ITER, BOUNDS, T, MAX_JUMP, MAX_REJECT = MODEL_PARAMETERS
@@ -317,23 +322,23 @@ def TPA_no_sat(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without saturation
     
-    PARAMETERS
-    data : Data structure, of size (N, 3) where N is the number of datapoints.
+    ## PARAMETERS
+    - data : Data structure, of size (N, 3) where N is the number of datapoints.
         [:,0]: z-data - [:, 1]: intensity-data - [:, 2]: uncertainty on intensity
-    p0 : Initial guess
+    - p0 : Initial guess
         [0]: z-position of focal point - [1]: nonlinear absorption coefficient
-    L : Sample thickness
-    ALPHA0 : Linear absorption coefficient
-    I0 : Beam intensity at the focal point
-    Z_R : Rayleigh length
-    MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
-        MAX_PERTURBATION : highest multiplication factor
-        MAX_AGE : stop-condition : maximum age of current optimal point
-        MAX_ITER: stop-condition : maxumum number of iterations
-        BOUNDS : bounds on the fitting parameters
-        T : basin hopping temperature
-        MAX_JUMP : number of consecutive jumps allowed
-        MAX_REJECT : number of rejects before jumping
+    - L : Sample thickness
+    - ALPHA0 : Linear absorption coefficient
+    - I0 : Beam intensity at the focal point
+    - Z_R : Rayleigh length
+    - MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
+        - MAX_PERTURBATION : highest multiplication factor
+        - MAX_AGE : stop-condition : maximum age of current optimal point
+        - MAX_ITER: stop-condition : maxumum number of iterations
+        - BOUNDS : bounds on the fitting parameters
+        - T : basin hopping temperature
+        - MAX_JUMP : number of consecutive jumps allowed
+        - MAX_REJECT : number of rejects before jumping
     """
     ## Basin hopping parameters
     MAX_PERTURBATION, MAX_AGE, MAX_ITER, BOUNDS, T, MAX_JUMP, MAX_REJECT = MODEL_PARAMETERS
@@ -423,23 +428,23 @@ def OPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model
     
-    PARAMETERS
-    data : Data structure, of size (N, 3) where N is the number of datapoints.
+    ## PARAMETERS
+    - data : Data structure, of size (N, 3) where N is the number of datapoints.
         [:,0]: z-data - [:, 1]: intensity-data - [:, 2]: uncertainty on intensity
-    p0 : Initial guess
+    - p0 : Initial guess
         [0]: z-position of focal point - [1]: first-order saturation intensity
-    L : Sample thickness
-    ALPHA0 : Linear absorption coefficient
-    I0 : Beam intensity at the focal point
-    Z_R : Rayleigh length
-    MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
-        MAX_PERTURBATION : highest multiplication factor
-        MAX_AGE : stop-condition : maximum age of current optimal point
-        MAX_ITER: stop-condition : maxumum number of iterations
-        BOUNDS : bounds on the fitting parameters
-        T : basin hopping temperature
-        MAX_JUMP : number of consecutive jumps allowed
-        MAX_REJECT : number of rejects before jumping
+    - L : Sample thickness
+    - ALPHA0 : Linear absorption coefficient
+    - I0 : Beam intensity at the focal point
+    - Z_R : Rayleigh length
+    - MODEL_PARAMETERS : List of parameters that determine basinhopping conditions
+        - MAX_PERTURBATION : highest multiplication factor
+        - MAX_AGE : stop-condition : maximum age of current optimal point
+        - MAX_ITER: stop-condition : maxumum number of iterations
+        - BOUNDS : bounds on the fitting parameters
+        - T : basin hopping temperature
+        - MAX_JUMP : number of consecutive jumps allowed
+        - MAX_REJECT : number of rejects before jumping
     """
     ## Basin hopping parameters
     MAX_PERTURBATION, MAX_AGE, MAX_ITER, BOUNDS, T, MAX_JUMP, MAX_REJECT = MODEL_PARAMETERS
