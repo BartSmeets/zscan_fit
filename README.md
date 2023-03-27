@@ -61,7 +61,7 @@ To be compatible with the [final fitting code](#z-scan-fit), the data needs to b
 
 The Jupyter Notebook takes the data from one or more measurements and returns normalised data of the data individually, as well as, a normalised average over all measurements. A plot of the normalised data is exported as well.
 
-By running the Notebook, an additional file is generated that is used to provide the experiment parameters to the final fitting code. An empty example of this file can be found in: ```./templates/INPUT_PARAMETERS.csv```.
+By running the Notebook, an additional file is generated that is used to provide the experiment parameters to the final fitting code. An empty example of this file can be found in: ```./docs/INPUT_PARAMETERS.csv```.
 
 ### How to use
 
