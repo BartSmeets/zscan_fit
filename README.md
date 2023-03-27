@@ -106,9 +106,7 @@ MAX_REJECT = 5                     # Local minimum treshold
 
 ## Installation and requirements
 
-This project has been build with:
-
-* [![Python](https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/)
+[![Build with]([https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/](https://img.shields.io/badge/Build%20with-Python%203.8-blue))
 
 ### Required packages
 * numpy
