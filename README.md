@@ -117,7 +117,7 @@ MAX_REJECT = 5                     # Local minimum treshold
 
 ### Installation
 
-1. [Download the latest release](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the repository:
+1. [Download the latest release](https://github.com/BartSmeets/zscan_fit/releases/latest) or clone the repository:
     
 ```bash
 git clone https://github.com/BartSmeets/zscan_fit.git
