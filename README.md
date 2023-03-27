@@ -78,7 +78,7 @@ By running the Jupyter Notebook, a ```.txt``` containing the fitted model parame
 
 ### How to use
 
-1. Open: ```.z_scan/zscan_fit.ipynb```
+1. Open: ```./z_scan/zscan_fit.ipynb```
 2. Run all sections, up to the ```fit``` section
 3. Provide the fit type, initial guesses for the fitting parameters, and the basin hopping algorithm in the ```fit``` section, i.e.,
 
