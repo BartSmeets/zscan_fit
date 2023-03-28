@@ -1,4 +1,4 @@
-from z_scan.fitting_model.absorption import transmittance
+from fitting_model.absorption import transmittance
 import numpy as np
 
 def TPA(data: np.dtype, z0: float, Is1: float, Is2: float, beta: float, L: float, ALPHA0: float, I0: float, Z_R: float) -> float:

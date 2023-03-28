@@ -1,6 +1,6 @@
 import numpy as np
-from z_scan.fitting_model.chi2_minimising import basinhopping
-from z_scan.fitting_model.chi2_minimising import chi2 as X2
+from fitting_model.chi2_minimising import basinhopping
+from fitting_model.chi2_minimising import chi2 as X2
 import tkinter as tk
 from tkinter import ttk
 import sys

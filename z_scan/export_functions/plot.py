@@ -5,7 +5,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from z_scan.fitting_model.absorption import transmittance, intensity
+from fitting_model.absorption import transmittance, intensity
 
 def Tz(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray, sigma: np.ndarray, fit_type: int, p_best: np.ndarray, experiment_param: list):
     """Plots data and T(z) based on fit results

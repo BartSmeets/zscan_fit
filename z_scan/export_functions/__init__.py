@@ -3,5 +3,5 @@
 - text
 """
 
-from z_scan.export_functions import plot
-from z_scan.export_functions import text
+from export_functions import plot
+from export_functions import text

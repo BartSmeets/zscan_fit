@@ -1,5 +1,5 @@
 import numpy as np
-from z_scan.fitting_model.chi2_minimising import chi2
+from fitting_model.chi2_minimising import chi2
 
 ####################################################################################
 
