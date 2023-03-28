@@ -12,7 +12,7 @@ All code necessary to analyse a z-scan measurement and fit the data according to
 
 ## General information
 
-This project has been part of my thesis for the degree of Master of Science in Nanoscience, Nanotechnology and Nanoengineering. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
+This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
 
 The code has been split into functional parts:
 * [beam profile](#beam-profile)
