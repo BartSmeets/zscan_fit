@@ -1,15 +1,8 @@
 # Python standard library
-from datetime import datetime
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
-import os, time
-
-# Required
-import numpy as np
-import pandas as pd
-from sklearn.linear_model import HuberRegressor
-import matplotlib.pyplot as plt
+import os
 
 from main import main
 
@@ -23,7 +16,6 @@ INITIAL_PATH = os.environ.get('HOMEPATH')
 # Create Window
 root = tk.Tk()
 root.geometry('600x150')
-#root.geometry('450x150')
 root.title('Normalise Data')
 root.resizable(0,0)
 root.attributes('-topmost', True)
@@ -66,8 +58,7 @@ run = tk.Button(root, text='Run', command=lambda: main(pb, root, FILE_NAMES))
 run.grid(column=3, row=1, sticky=tk.E, padx=5, pady=5)
 
 # Close button
-close = tk.Button(root, text='Close', command=lambda: root.destroy())
-#close = tk.Button(root, text='Close', command=lambda: root.quit())
+close = tk.Button(root, text='Close', command=lambda: root.quit())
 close.grid(column=3, row=2, sticky=tk.E, padx=5, pady=5)
 
 root.mainloop()
