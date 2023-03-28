@@ -61,7 +61,7 @@ To be compatible with the [final fitting code](#z-scan-fit), the data needs to b
 
 The Jupyter Notebook takes the data from one or more measurements and returns normalised data of the data individually, as well as, a normalised average over all measurements. A plot of the normalised data is exported as well.
 
-By running the Notebook, an additional file is generated that is used to provide the experiment parameters to the final fitting code. An empty example of this file can be found in: ```./templates/INPUT_PARAMETERS.csv```.
+By running the Notebook, an additional file is generated that is used to provide the experiment parameters to the final fitting code. An empty example of this file can be found in: ```./docs/INPUT_PARAMETERS.csv```.
 
 ### How to use
 
@@ -78,8 +78,10 @@ By running the Jupyter Notebook, a ```.txt``` containing the fitted model parame
 
 ### How to use
 
-1. Open: ```./z_scan_zscan_fit.ipynb```
+1. Open: ```./z_scan/zscan_fit.ipynb```
+
 2. Run all sections, up to the ```fit``` section
+
 3. Provide the fit type, initial guesses for the fitting parameters, and the basin hopping algorithm in the ```fit``` section, i.e.,
 
 ```python
