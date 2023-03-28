@@ -19,7 +19,7 @@ INITIAL_PATH = os.environ.get('HOMEPATH')
 # Create Window
 root = tk.Tk()
 root.geometry('600x150')
-root.title('User Input')
+root.title('Power measurement')
 root.resizable(0,0)
 root.attributes('-topmost', True)
 
