@@ -1,7 +1,7 @@
 """Module for the basin hopping algorithm for the different models"""
 
 import numpy as np
-import z_scan.fitting_model.chi2_minimising.chi2 as X2
+import fitting_model.chi2_minimising.chi2 as X2
 from scipy.optimize import minimize
 
 def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):

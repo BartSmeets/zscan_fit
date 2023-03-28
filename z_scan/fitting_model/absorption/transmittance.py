@@ -1,6 +1,6 @@
 """Module containing functions that calculate the transmittance through a sample for the different models"""
 
-from z_scan.fitting_model.absorption import dI_dz
+from fitting_model.absorption import dI_dz
 from .intensity import intensity as I
 from scipy.integrate import solve_ivp
 
