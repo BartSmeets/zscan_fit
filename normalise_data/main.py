@@ -41,7 +41,7 @@ def main(pb, root, file_names):
             N_DATAPOINTS = len(data[:,0])
             DATA = np.ndarray((N_MEASUREMENTS, N_DATAPOINTS, 3))    # 0: measurement; 1: data point; 2: data type
         ## Store data in data structure
-        DATA[i, :, 0] = data[:,0]
+        DATA[i, :, 0] = np.abs(data[:,0])
         DATA[i, :, 1] = data[:, 1]
         DATA[i, :, 2] = data[:, 2]
 
