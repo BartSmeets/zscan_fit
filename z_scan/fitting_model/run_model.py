@@ -35,6 +35,12 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
     progress = 'Number of models computed: 0/' + str(n_runs) 
     value_label = ttk.Label(root, text=progress)
     value_label.grid(column=0, row=1, columnspan=2)
+    ## Iteration number
+    iter_label = ttk.Label(root, text='iteration: ' + str(0) + '/' + str(model_param[2]))
+    iter_label.grid(column=0, row=2, columnspan=2)
+    ## Age
+    age_label = ttk.Label(root, text='Best age: ' + str(0) + '/' + str(model_param[1]))
+    age_label.grid(column=0, row=3, columnspan=2)
     root.update()
 
 
@@ -47,8 +53,13 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
     
         ## Run model
         for i in range(n_runs):
+
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0])    # Initial guess
-            popt, chi2 = basinhopping.OPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param)
+            popt, chi2 = basinhopping.OPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, root, iter_label, age_label)
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -73,8 +84,12 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_Is2(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_Is2(measurement, p0, L, ALPHA0, I0, Z_R, model_param, root, iter_label, age_label)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -99,8 +114,12 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0, I_S2_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, root, iter_label, root, iter_label, age_label)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -127,8 +146,12 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S2_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_Is1(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_Is1(measurement, p0, L, ALPHA0, I0, Z_R, model_param, root, iter_label, age_label)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -154,8 +177,12 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+            
             p0 = np.array([Z0_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_sat(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_sat(measurement, p0, L, ALPHA0, I0, Z_R, model_param, root, iter_label, age_label)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]

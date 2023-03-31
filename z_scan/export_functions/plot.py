@@ -75,6 +75,7 @@ def TI(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray,
         ax.errorbar(intensity(z_data, p_best[0], experiment_param[2], experiment_param[3]), I_data, sigma, fmt='o')
         ax.plot(intensity(z_plot, p_best[0], experiment_param[2], experiment_param[3]), transmittance.TPA_no_Is2(z_plot, *p_best, *experiment_param))
         ax.axvline(p_best[1], ls=':', color='green', label=r'$I_{s1}$')
+        ax.axvline(experiment_param[1]/p_best[-1], ls=':', color='red', label=r'$\alpha / \beta$')
 
     # 2PA
     elif fit_type == 2:

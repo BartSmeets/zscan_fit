@@ -2,9 +2,10 @@
 
 import numpy as np
 import fitting_model.chi2_minimising.chi2 as X2
+import tkinter as tk
 from scipy.optimize import minimize
 
-def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):
+def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list, root, iter_label, best_label):
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model
     
@@ -48,6 +49,11 @@ def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
     while niter < MAX_ITER and bestAge < MAX_AGE:
         niter += 1
         bestAge += 1
+
+        # Iteration update
+        iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
+        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        root.update()
         
         #### Monte Carlo Move
         pPerturbation = list(pMin)
@@ -111,7 +117,7 @@ def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
 
 ##########################################################################################
 
-def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):
+def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list, root, iter_label, best_label):
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without Is1
     
@@ -155,6 +161,11 @@ def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     while niter < MAX_ITER and bestAge < MAX_AGE:
         niter += 1
         bestAge += 1
+
+        # Iteration update
+        iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
+        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        root.update()
         
         #### Monte Carlo Move
         pPerturbation = list(pMin)
@@ -211,7 +222,7 @@ def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
 
 ############################################################################################
 
-def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):
+def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list, root, iter_label, best_label):
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without Is2
     
@@ -240,7 +251,7 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     fitting_model = lambda x: X2.TPA_no_Is2(data, x[0], x[1], x[2], L, ALPHA0, I0, Z_R)
     
     ## Set initial chi2
-    popt = minimize(fitting_model, x0=p0, bounds=BOUNDS)
+    popt = minimize(fitting_model, x0=p0, bounds=BOUNDS, method='Nelder-Mead')
     pBest = pMin = popt.x
     chi2Prev = chi2Best = fitting_model(pMin)
     
@@ -256,6 +267,11 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
         niter += 1
         bestAge += 1
         
+        # Iteration update
+        iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
+        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        root.update()
+
         #### Monte Carlo Move
         pPerturbation = list(pMin)
         for i in [1]:
@@ -267,7 +283,7 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
                 pPerturbation[i] = pMin[i] * perturbation
 
         #### Minimise Chi2
-        popt = minimize(fitting_model, x0=pPerturbation, bounds=BOUNDS)
+        popt = minimize(fitting_model, x0=pPerturbation, bounds=BOUNDS, method='Nelder-Mead')
         p_newMin = popt.x
         chi2 = fitting_model(p_newMin)
         
@@ -318,7 +334,7 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
 
 ######################################################################################
 
-def TPA_no_sat(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):
+def TPA_no_sat(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list, root, iter_label, best_label):
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model without saturation
     
@@ -361,6 +377,11 @@ def TPA_no_sat(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
     while niter < MAX_ITER and bestAge < MAX_AGE:
         niter += 1
         bestAge += 1
+
+        # Iteration update
+        iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
+        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        root.update()
         
         #### Monte Carlo Move
         pPerturbation = list(pMin)
@@ -424,7 +445,7 @@ def TPA_no_sat(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
 
 ##########################################################################################
 
-def OPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list):
+def OPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: float, MODEL_PARAMETERS: list, root, iter_label, best_label):
     """Returns optimal fitting parameters and optimal chi-squared following a Monte-Carlo minimisation algorithm
         for the 2PA model
     
@@ -467,6 +488,11 @@ def OPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
     while niter < MAX_ITER and bestAge < MAX_AGE:
         niter += 1
         bestAge += 1
+
+        # Iteration update
+        iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
+        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        root.update()
         
         #### Monte Carlo Move
         pPerturbation = list(pMin)

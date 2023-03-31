@@ -31,8 +31,8 @@ def errorbar(data: np.ndarray, fit_type: int, p_best: np.ndarray , chi2_best: fl
         n_param = 4
     
     # Determine chi2 region
-    WEIGHT = np.sum(1/np.sqrt(1+((data[:,0]-p_best[0])/experiment_param[3])**2)) / N_POINTS
-    #WEIGHT = 1
+    #WEIGHT = np.sum(1/np.sqrt(1+((data[:,0]-p_best[0])/experiment_param[3])**2)) / N_POINTS
+    WEIGHT = 1
     CHI2_COMPARISON = (N_POINTS - n_param) * WEIGHT + chi2_best    # Degrees of freedom of model * average value of the weigth function
     
     # Error calculation
