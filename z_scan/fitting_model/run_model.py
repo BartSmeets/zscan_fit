@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 import sys
 
-def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param: list, experiment_param: list):
+def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param: list, experiment_param: list, root, iter_label, value_label, age_label, pb):
     """Returns the fitting results of all runs, as well as the fitting parameters and chi-squared of the best run
     
     ##PARAMETERS
@@ -21,22 +21,11 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
     BOUNDS = model_param[3]
     [L, ALPHA0, I0, Z_R] = experiment_param
 
-    # Progress bar
-    ## Create window
-    root = tk.Tk()
-    root.geometry('300x120')
-    root.title('Progress bar')
-    root.resizable(0,0)
-    root.attributes('-topmost', True)
-    ## Create and place progress bar
-    pb = ttk.Progressbar(root, orient='horizontal', mode='determinate', length='280')
-    pb.grid(column=0, row=0, columnspan=2, padx=10, pady=20)
-    ## Initialise progress bar
-    progress = 'Number of models computed: 0/' + str(n_runs) 
-    value_label = ttk.Label(root, text=progress)
-    value_label.grid(column=0, row=1, columnspan=2)
+    value_label.config(text= 'Number of models computed: ' + str(0) + '/' + str(n_runs))
+    age_label.config(text='Best age: ' + str(0) + '/' + str(model_param[1]))
+    iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+    pb['value'] = 0
     root.update()
-
 
     # Run 1PA Model
     if fit_type == 0:
@@ -48,7 +37,7 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         ## Run model
         for i in range(n_runs):
             p0 = np.array([Z0_0, I_S1_0])    # Initial guess
-            popt, chi2 = basinhopping.OPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param)
+            popt, chi2 = basinhopping.OPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -74,7 +63,7 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         ## Run model
         for i in range(n_runs):
             p0 = np.array([Z0_0, I_S1_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_Is2(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_Is2(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -100,7 +89,7 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         ## Run model
         for i in range(n_runs):
             p0 = np.array([Z0_0, I_S1_0, I_S2_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -128,7 +117,7 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         ## Run model
         for i in range(n_runs):
             p0 = np.array([Z0_0, I_S2_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_Is1(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_Is1(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -155,7 +144,7 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         ## Run model
         for i in range(n_runs):
             p0 = np.array([Z0_0, BETA_0])    # Initial guess
-            popt, chi2 = basinhopping.TPA_no_sat(measurement, p0, L, ALPHA0, I0, Z_R, model_param)    # Run model
+            popt, chi2 = basinhopping.TPA_no_sat(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -174,5 +163,4 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
         sys.exit('No valid fit type')
 
     # Close progress bar
-    root.destroy()
     return RUNS, P_BEST, CHI2_BEST 

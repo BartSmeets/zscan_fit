@@ -5,7 +5,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from fitting_model.absorption import transmittance, intensity
 
 def Tz(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray, sigma: np.ndarray, fit_type: int, p_best: np.ndarray, experiment_param: list):
     """Plots data and T(z) based on fit results
@@ -21,7 +20,9 @@ def Tz(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray,
     - p_best: optimal fitting parameters
     - experiment_param: list of experiment parameters
     """
-
+    # Specific Imports
+    from fitting_model.absorption import transmittance
+    
     # 1PA
     if fit_type == 0:
         ax.errorbar(z_data, I_data, sigma, fmt='o')
@@ -64,6 +65,10 @@ def TI(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray,
     - p_best: optimal fitting parameters
     - experiment_param: list of experiment parameters
     """
+
+    # Specific imports
+    from fitting_model.absorption import transmittance, intensity
+
     # 1PA
     if fit_type == 0:
         ax.errorbar(intensity(z_data, p_best[0], experiment_param[2], experiment_param[3]), I_data, sigma, fmt='o')
@@ -95,3 +100,22 @@ def TI(ax: plt.Axes, z_data: np.ndarray, I_data: np.ndarray, z_plot: np.ndarray,
         ax.plot(intensity(z_plot, p_best[0], experiment_param[2], experiment_param[3]), transmittance.TPA_no_sat(z_plot, *p_best, *experiment_param))
         ax.axvline(experiment_param[1]/p_best[-1], ls=':', color='red', label=r'$\alpha / \beta$')
     return
+
+##############################################################################################
+
+def plot_raw(measurement: np.ndarray):
+    """Plots raw data
+    
+    ## PARAMETERS
+    ---
+    - Measurement data set
+    """
+
+    fig = plt.figure()
+
+    plt.errorbar(measurement[:,0], measurement[:,1], measurement[:,2], fmt='o')
+
+    plt.title('Raw Data')
+    plt.xlabel('z [mm]')
+    plt.ylabel('Normalised transmittance')
+    return fig
