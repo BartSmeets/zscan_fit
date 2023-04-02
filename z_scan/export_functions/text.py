@@ -165,3 +165,25 @@ def output(fit_type, chi2_best, p_best, sigma, span):
         r'z0 = (%.2f +- %.2f) mm; X2 span: %.2f' % (p_best[0], sigma[0], span[0], ),
         r'beta = (%.2e +- %.1e)  mm/W; X2 span: %.2f' % (p_best[1], sigma[1], span[1],)))
     return textstr
+
+###########################################################################
+
+def parameter_string(parameter_data):
+    """Returns string with optimal fitting parameters and optimal chi-squared
+    
+    ##PARAMETERS
+    ---
+    - Paramter data set
+    """
+
+    [L, ALPHA0, I0, Z_R, W0, E_PULSE] = parameter_data
+
+    PARAMETER_STRING = '\n'.join((
+        r'Model Parameters',
+        r'alpha0 = %.2f cm-1' % (ALPHA0*10, ),
+        r'L = %.1f cm' % (L/10, ),
+        r'w0 = %.2f um' % (W0*1e3, ),
+        r'zR = %.2f um' % (Z_R*1e3, ),
+        r'E_pulse = %.2f uJ' % (E_PULSE*1e6, ),
+        r'I0 = %.2e  W/mm2' % (I0, )))
+    return PARAMETER_STRING
