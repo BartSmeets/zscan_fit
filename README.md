@@ -12,7 +12,7 @@ All code necessary to analyse a z-scan measurement and fit the data according to
 
 ## General information
 
-This project has been part of my thesis for the degree of Master of Science in Nanoscience, Nanotechnology and Nanoengineering. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
+This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
 
 The code has been split into functional parts:
 * [beam profile](#beam-profile)
@@ -27,6 +27,12 @@ The first step of doing a z-scan measurement is to know the properties of the be
 After conducting the measurement, as described in the [report](/documentation/thesis.pdf), the beam properties are exported in a ```.txt``` by running the Jupyter Notebook. A plot of the beam profile and the beam waist is exported as well.
 
 ### How to use
+
+#### In ```zscan_fit.zip```
+
+1. Simply run: ```beam_profile.exe```
+
+#### In repository
 
 1. Simply run: ```./beam_profile/beam_profile.ipynb```
 
@@ -53,6 +59,12 @@ The Jupyter Notebook reads the oscilloscope data and exports a ```.txt``` contai
 
 ### How to use
 
+#### In ```zscan_fit.zip```
+
+1. Simply run: ```power_measurement.exe```
+
+#### In repository
+
 1. Simply run: ```./power_measurement/power_measurement.ipynb```
 
 ## Normalise data
@@ -64,6 +76,12 @@ The Jupyter Notebook takes the data from one or more measurements and returns no
 By running the Notebook, an additional file is generated that is used to provide the experiment parameters to the final fitting code. An empty example of this file can be found in: ```./docs/INPUT_PARAMETERS.csv```.
 
 ### How to use
+
+#### In ```zscan_fit.zip```
+
+1. Simply run: ```normalise_data.exe```
+
+#### In repository
 
 1. Simply run: ```./normalise_data/normalise_data.ipynb```
 
@@ -77,6 +95,8 @@ The Jupyter Notebook takes the normalised data and a completed input-file that h
 By running the Jupyter Notebook, a ```.txt``` containing the fitted model parameters is exported, as well as, plots of the fitted data.
 
 ### How to use
+
+#### In ```zscan_fit.zip``` and repository
 
 1. Open: ```./z_scan/zscan_fit.ipynb```
 
@@ -119,14 +139,17 @@ MAX_REJECT = 5                     # Local minimum treshold
 
 ### Installation
 
-1. [Download the latest release](https://github.com/BartSmeets/zscan_fit/releases/latest) or clone the repository:
+1. [Download](https://github.com/BartSmeets/zscan_fit/releases/latest/download/zscan_fit.zip) ```zscan_fit.zip``` containing the executable files*
+
+2. Unzip ```zscan_fit.zip```
+
+3. Install the requirements (only for [z-scan fit](#z-scan-fit)):
+```bash
+pip install -r requirements.txt
+```
+
+*Alternatively, you can [download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the entire repository:
     
 ```bash
 git clone https://github.com/BartSmeets/zscan_fit.git
-```
-
-2. Install the requirements:
-
-```bash
-pip install -r requirements.txt
 ```

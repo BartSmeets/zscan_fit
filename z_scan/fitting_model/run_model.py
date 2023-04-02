@@ -36,8 +36,14 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
     
         ## Run model
         for i in range(n_runs):
+
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0])    # Initial guess
             popt, chi2 = basinhopping.OPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)
+            
             ## Store results
             RUNS[i, 0]=popt[0]
             RUNS[i, 1]=popt[1]
@@ -62,6 +68,10 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0, BETA_0])    # Initial guess
             popt, chi2 = basinhopping.TPA_no_Is2(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
@@ -88,6 +98,10 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S1_0, I_S2_0, BETA_0])    # Initial guess
             popt, chi2 = basinhopping.TPA(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
@@ -116,6 +130,10 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+
             p0 = np.array([Z0_0, I_S2_0, BETA_0])    # Initial guess
             popt, chi2 = basinhopping.TPA_no_Is1(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
@@ -143,6 +161,10 @@ def run(measurement: np.dtype, fit_type: int, n_runs: int, p0: list, model_param
 
         ## Run model
         for i in range(n_runs):
+            # Iteration update
+            iter_label.config(text= 'Iteration : ' + str(0) + '/' + str(model_param[2]))
+            root.update()
+            
             p0 = np.array([Z0_0, BETA_0])    # Initial guess
             popt, chi2 = basinhopping.TPA_no_sat(measurement, p0, L, ALPHA0, I0, Z_R, model_param, age_label, iter_label, root)    # Run model
             ## Store results
