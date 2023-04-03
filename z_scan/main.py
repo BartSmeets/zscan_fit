@@ -1,16 +1,8 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog
-import os, sys
-import numpy as np
-import pandas as pd
 # Python standard library
 from datetime import datetime
 import os, sys
 import tkinter as tk
-from tkinter import ttk
 from tkinter import filedialog
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Required
 import numpy as np
@@ -18,9 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Included in repository
-import errorbar
 import export_functions
-import fitting_model
 from fitting_model.absorption import intensity
 
 

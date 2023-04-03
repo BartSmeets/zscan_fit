@@ -1,8 +1,6 @@
 ## Python standard library
 from datetime import datetime
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import ttk
 import os, time
 
 ## Required
