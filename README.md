@@ -28,15 +28,15 @@ After conducting the measurement, as described in the [report](/documentation/th
 
 ### How to use
 
-#### In ```zscan_fit.zip```
+#### In ```z-scan.zip```
 
-1. Simply run: ```beam_profile.exe```
+1. Simply run: ```./bin/beam_profile.exe```
 
 #### In repository
 
-1. Simply run: ```./beam_profile/beam_profile.ipynb```
+1. Simply run: ```./beam_profile/beam_profile.ipynb``` or ```./beam_profile/window.py```
 
-2. If any data point needs to be exclude, enter the index of that data point in the ```Exclude data``` section, i.e.,
+2. (Only in ```.ipynb```) If any data point needs to be exclude, enter the index of that data point in the ```Exclude data``` section, i.e.,
 
 ```python
 # USER INPUT
@@ -61,11 +61,11 @@ The Jupyter Notebook reads the oscilloscope data and exports a ```.txt``` contai
 
 #### In ```zscan_fit.zip```
 
-1. Simply run: ```power_measurement.exe```
+1. Simply run: ```./bin/power_measurement.exe```
 
 #### In repository
 
-1. Simply run: ```./power_measurement/power_measurement.ipynb```
+1. Simply run: ```./power_measurement/power_measurement.ipynb``` or ```./power_measurement/window.py```
 
 ## Normalise data
 
@@ -77,13 +77,13 @@ By running the Notebook, an additional file is generated that is used to provide
 
 ### How to use
 
-#### In ```zscan_fit.zip```
+#### In ```z-scan.zip```
 
-1. Simply run: ```normalise_data.exe```
+1. Simply run: ```./bin/normalise_data.exe```
 
 #### In repository
 
-1. Simply run: ```./normalise_data/normalise_data.ipynb```
+1. Simply run: ```./normalise_data/normalise_data.ipynb``` or ```./normalise_data/window.py``` 
 
 
 ## Z-Scan fit
@@ -96,7 +96,15 @@ By running the Jupyter Notebook, a ```.txt``` containing the fitted model parame
 
 ### How to use
 
-#### In ```zscan_fit.zip``` and repository
+#### In ```z-scan.zip```
+
+1. Simply run: ```./bin/z_scan.exe```
+
+#### In repository
+
+1. Simply run: ```./z_scan/window.py```
+
+or
 
 1. Open: ```./z_scan/zscan_fit.ipynb```
 
@@ -130,7 +138,7 @@ MAX_REJECT = 5                     # Local minimum treshold
 
 [![Build with](https://img.shields.io/badge/Build%20with-Python%203.8-blue)](https://www.python.org/])
 
-### Required packages
+### Required packages (only for running ```.py``` and ```.ipynb```)
 * numpy
 * pandas
 * matplotlib.pyplot
@@ -139,17 +147,21 @@ MAX_REJECT = 5                     # Local minimum treshold
 
 ### Installation
 
-1. [Download](https://github.com/BartSmeets/zscan_fit/releases/latest/download/zscan_fit.zip) ```zscan_fit.zip``` containing the executable files*
+1. [Download](https://github.com/BartSmeets/zscan_fit/releases/latest/download/z-scan.zip) ```z-scan.zip``` containing the executable files*
 
 2. Unzip ```zscan_fit.zip```
 
 3. Install the requirements (only for [z-scan fit](#z-scan-fit)):
-```bash
-pip install -r requirements.txt
-```
+
 
 *Alternatively, you can [download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the entire repository:
     
 ```bash
 git clone https://github.com/BartSmeets/zscan_fit.git
+```
+
+in which case the installation of the dependencies is required:
+
+```
+pip install -r requirements.txt
 ```
