@@ -53,7 +53,7 @@ def TPA(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float, Z_R: f
 
         # Iteration update
         iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
-        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        age_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
         root.update()
         
         age_label.config(text='Best age: ' + str(bestAge) + '/' + str(MAX_AGE))
@@ -169,7 +169,7 @@ def TPA_no_Is1(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
 
         # Iteration update
         iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
-        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        age_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
         root.update()
         
         age_label.config(text='Best age: ' + str(bestAge) + '/' + str(MAX_AGE))
@@ -282,7 +282,7 @@ def TPA_no_Is2(data: np.dtype, p0: np.dtype, L: float, ALPHA0: float, I0: float,
         
         # Iteration update
         iter_label.config(text= 'Iteration : ' + str(niter) + '/' + str(MAX_ITER))
-        best_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
+        age_label.config(text= 'Best age : ' + str(bestAge) + '/' + str(MAX_AGE))
         root.update()
 
         #### Monte Carlo Move
