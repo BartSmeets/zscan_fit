@@ -40,10 +40,18 @@ def main(pb, root, file_names):
         if i == 0:    
             N_DATAPOINTS = len(data[:,0])
             DATA = np.ndarray((N_MEASUREMENTS, N_DATAPOINTS, 3))    # 0: measurement; 1: data point; 2: data type
-        ## Store data in data structure
-        DATA[i, :, 0] = np.abs(data[:,0])
-        DATA[i, :, 1] = data[:, 1]
-        DATA[i, :, 2] = data[:, 2]
+        
+        ## Check measurement direction
+        if data[0,0] > 0:
+            ### Forward measurement
+            DATA[i, :, 0] = data[:,0]
+            DATA[i, :, 1] = data[:, 1]
+            DATA[i, :, 2] = data[:, 2]
+        else:
+            ### Backward measurement
+            DATA[i, :, 0] = np.abs(data[:,0])
+            DATA[i, :, 1] = np.flip(data[:, 1])
+            DATA[i, :, 2] = np.flip(data[:, 2])
 
     # Average data
     DATA_AVERAGE = np.ndarray((N_DATAPOINTS, 3))    # Initialise data structure
