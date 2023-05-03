@@ -9,8 +9,47 @@ import os, time
 # Required
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import HuberRegressor
+from scipy.signal import find_peaks, peak_widths
 import matplotlib.pyplot as plt
+
+##############################
+# DEFINE NORMALISE
+##############################
+
+def normalise(data):
+
+    # Locate peaks
+    peaks, p_properties = find_peaks(data, prominence=0)
+    if len(p_properties['prominences']) != 0:
+        peak = peaks[np.argmax(p_properties['prominences'])]
+        p_prominence = np.max(p_properties['prominences'])
+    else:
+        p_prominence = 0
+
+    # Locate valleys
+    valleys, v_properties = find_peaks(-data, prominence=0)
+    if len(v_properties['prominences']) != 0:
+        valley = valleys[np.argmax(v_properties['prominences'])]
+        v_prominence = np.max(v_properties['prominences'])
+    else:
+        v_prominence = 0
+
+    # Check if peak or valley is more prominent
+    if p_prominence > v_prominence:
+        width = peak_widths(data, [peak], 1 - 0.135)
+    else:
+        width = peak_widths(-data, [valley], 1 - 0.135)
+
+    # Find boundary indices of peak or valley
+    left_index = int(width[2])
+    right_index = int(width[3])
+
+    # Compute baseline
+    baseline = np.append(data[:left_index], data[right_index:])
+    normalisation = np.average(baseline)
+
+    return normalisation
+
 
 ##############################
 # DEFINE MAIN
@@ -53,17 +92,6 @@ def main(pb, root, file_names):
             DATA[i, :, 1] = np.flip(data[:, 1])
             DATA[i, :, 2] = np.flip(data[:, 2])
 
-    # Average data
-    DATA_AVERAGE = np.ndarray((N_DATAPOINTS, 3))    # Initialise data structure
-    for i in range(N_DATAPOINTS):
-        ## Calculate average
-        OA_averge = np.average(DATA[:, i, 1])
-        CA_averge = np.average(DATA[:, i, 2])
-        ## Store average in data structure
-        DATA_AVERAGE[:, 0] = DATA[0, :, 0]
-        DATA_AVERAGE[i, 1] = OA_averge
-        DATA_AVERAGE[i, 2] = CA_averge
-
     # Update progress bar
     pb['value'] = 20
     root.update()
@@ -72,42 +100,25 @@ def main(pb, root, file_names):
 # PLOT UNPROCESSED DATA             
 ##############################
 
-    fig, ax = plt.subplots(2, 2, figsize=(8,7))
+    fig, ax = plt.subplots(1, 2, figsize=(8,3.5))
 
     # Plot individual measurements
     for i in range(N_MEASUREMENTS):
         file_name = file_names[i]
-        ax[0,0].plot(DATA[i, :, 0], DATA[i, :, 1], 'o', label=file_name[index+1:])
-        ax[0,1].plot(DATA[i, :, 0], DATA[i, : , 2], 'o')
-    # Plot average of measurements
-    ax[1,0].plot(DATA_AVERAGE[:,0], DATA_AVERAGE[:, 1], 'o-')
-    ax[1,1].plot(DATA_AVERAGE[:,0], DATA_AVERAGE[:, 2], 'o-')
+        ax[0].plot(DATA[i, :, 0], DATA[i, :, 1], 'o', label=file_name[index+1:])
+        ax[1].plot(DATA[i, :, 0], DATA[i, : , 2], 'o')
     # Label axes
-    ax[0,0].legend(bbox_to_anchor=(2.9,1))
-    ax[0,0].set_title('Open Aperture')
-    ax[1,0].set_title('Open Aperture (average)')
-    ax[1,0].set_xlabel('z [mm]')
-    ax[0,0].set_ylabel('Transmittance')
-    ax[1,0].set_ylabel('Transmittance')
-    ax[0,1].set_title('Closed Aperture')
-    ax[1,1].set_title('Closed Aperture (average)')
-    ax[1,1].set_xlabel('z [mm]')
+    ax[0].legend(bbox_to_anchor=(2.9,1))
+    ax[0].set_title('Open Aperture')
+    ax[0].set_xlabel('z [mm]')
+    ax[0].set_ylabel('Transmittance')
+    ax[1].set_title('Closed Aperture')
+    ax[1].set_xlabel('z [mm]')
 
     # Update progress bar
     pb['value'] = 40
     root.update()
 
-##############################
-# CALCULATE ERRORBARS         
-##############################
-
-    MAE = np.ndarray((N_DATAPOINTS, 2))    # Initialise data structure
-
-    # Calculate the MAE for every data point
-    for i in range(N_DATAPOINTS):    
-        MAE[i, 0] = np.sum(np.abs(DATA[:, i, 1] - DATA_AVERAGE[i,1])) / N_MEASUREMENTS
-        MAE[i, 1] = np.sum(np.abs(DATA[:, i, 2] - DATA_AVERAGE[i,2])) / N_MEASUREMENTS
-    
 ##############################
 # NORMALISE DATA    
 ##############################
@@ -117,23 +128,37 @@ def main(pb, root, file_names):
     DATA_NORM = np.ndarray((N_MEASUREMENTS, N_DATAPOINTS, 3))
     MAE_NORM = np.ndarray((N_DATAPOINTS,2))
 
+
     # Normalise data and store in data structure
     ## Store z-position
-    DATA_AVERAGE_NORM[:, 0] = DATA_AVERAGE[:,0]
+    DATA_AVERAGE_NORM[:, 0] = DATA[0, :,0]
     DATA_NORM[:,:,0] = DATA[:,:,0]
     ## Store normalised open and closed aperture and errorbars
     for i in [1, 2]:
-        ### Determine normalisation factor
-        baseline = HuberRegressor().fit(DATA_AVERAGE[:, 0].reshape(-1,1), DATA_AVERAGE[:, i])
-        normalisation = np.average(baseline.predict(DATA_AVERAGE[:, 0].reshape(-1,1)))
-        ### Store normalisation
-        DATA_AVERAGE_NORM[:, i] = DATA_AVERAGE[:, i] / normalisation
-        MAE_NORM[:, i-1] = MAE[:, i-1] / normalisation
         for j in range(N_MEASUREMENTS):
-            baseline = HuberRegressor().fit(DATA[j, :, 0].reshape(-1,1), DATA[j, :, i])
-            normalisation = np.average(baseline.predict(DATA[j, :, 0].reshape(-1,1)))
+            normalisation = normalise(DATA[j, :, i])
             DATA_NORM[j,:, i] = DATA[j,:, i] / normalisation
 
+##############################
+# AVERAGE
+##############################
+    for i in range(N_DATAPOINTS):
+        ## Calculate average
+        OA_averge = np.average(DATA_NORM[:, i, 1])
+        CA_averge = np.average(DATA_NORM[:, i, 2])
+        ## Store average in data structure
+        DATA_AVERAGE_NORM[i, 1] = OA_averge
+        DATA_AVERAGE_NORM[i, 2] = CA_averge
+
+##############################
+# ERROR BARS
+##############################
+    MAE_NORM = np.ndarray((N_DATAPOINTS, 2))    # Initialise data structure
+    ## Calculate the MAE for every data point
+    for i in range(N_DATAPOINTS):    
+        MAE_NORM[i, 0] = np.sum(np.abs(DATA_NORM[:, i, 1] - DATA_AVERAGE_NORM[i,1])) / N_MEASUREMENTS
+        MAE_NORM[i, 1] = np.sum(np.abs(DATA_NORM[:, i, 2] - DATA_AVERAGE_NORM[i,2])) / N_MEASUREMENTS
+    
     # Update progress bar
     pb['value'] = 60
     root.update()
