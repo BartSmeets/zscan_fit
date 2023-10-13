@@ -12,9 +12,9 @@ All code necessary to analyse a z-scan measurement and fit the data according to
 
 ## General information
 
-This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
+This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/MasterThesis_BartSmeets_final.pdf) for methodology of the measurment and documentation of the code.
 
-The code has been split into functional parts:
+The code has been split into four functional parts:
 * [beam profile](#beam-profile)
 * [power measurement](#power-measurement)
 * [normalise data](#normalise-data)
@@ -22,17 +22,11 @@ The code has been split into functional parts:
 
 ## Beam profile
 
-The first step of doing a z-scan measurement is to know the properties of the beam. The program generates a ```.txt``` containting the beam properties
+The first step of doing a z-scan measurement is to know the properties of the beam. The program generates a ```.txt``` containting the beam properties.
 
 ### How to use
 
-1. Run ```./bin/beam_profile.exe``` (```z-scan.zip```) or ```./beam_profile/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/beam_profile_exe.png)
-
-2. Select the folder that contains and enter the wavelength and stepsize of the measurement in the window
-
-3. Press 'run'
+1. Follow the steps in ```beam_profile.ipynb```
 
 ## Power measurement
 
@@ -42,13 +36,7 @@ The program reads the oscilloscope data and exports a ```.txt``` containing the 
 
 ### How to use
 
-1. Run: ```./bin/power_measurement.exe``` (```z-scan.zip```) or ```./power_measurement/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/power_measurement_exe.png)
-
-2. Select the oscilloscope data file
-
-3. Press 'run'
+1. Follow the steps in ```power_measurement.ipynb```
 
 ## Normalise data
 
@@ -60,13 +48,7 @@ By running the program, an additional file is generated that is used to provide 
 
 ### How to use
 
-1. Run: ```./bin/normalise_data.exe``` (```z-scan.zip```) or ```./normalise_data/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/normalise_data_exe.png)
-
-2. Select one or multiple data files
-
-3. Press 'run'
+1. Follow the steps in ```normalise_data.ipynb```
 
 
 ## Z-Scan fit
@@ -79,7 +61,7 @@ By running the program, a ```.txt``` containing the fitted model parameters is e
 
 ### How to use
 
-1. Run: ```./bin/z_scan.exe``` (```z-scan.zip```) or ```./z_scan/window.py``` (repository)
+1. Run: ```z-scan.py```
 
 ![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/z_scan_exe.png)
 
@@ -96,26 +78,23 @@ By running the program, a ```.txt``` containing the fitted model parameters is e
 
 [![Build with](https://img.shields.io/badge/Build%20with-Python%203.8-blue)](https://www.python.org/])
 
-### Required packages (only when running from repository)
+### Required packages
 * numpy
 * pandas
 * matplotlib.pyplot
 * scipy.optimize
 * scipy.signal
+* scikit-learn
 
 ### Installation
 
-1. [Download](https://github.com/BartSmeets/zscan_fit/releases/latest/download/z-scan.zip) ```z-scan.zip``` containing the executable files*
-
-2. Unzip ```zscan_fit.zip```
-
-*Alternatively, you can [download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the entire repository:
+1. [Download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the repository:
     
 ```bash
 git clone https://github.com/BartSmeets/zscan_fit.git
 ```
 
-in which case the installation of the dependencies is required:
+2. Install the required packages:
 
 ```
 pip install -r requirements.txt
