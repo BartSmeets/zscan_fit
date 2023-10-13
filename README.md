@@ -61,7 +61,7 @@ By running the program, a ```.txt``` containing the fitted model parameters is e
 
 ### How to use
 
-1. Run: ```./bin/z_scan.exe``` (```z-scan.zip```) or ```./z_scan/window.py``` (repository)
+1. Run: ```z-scan.py```
 
 ![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/z_scan_exe.png)
 
@@ -88,17 +88,13 @@ By running the program, a ```.txt``` containing the fitted model parameters is e
 
 ### Installation
 
-1. [Download](https://github.com/BartSmeets/zscan_fit/releases/latest/download/z-scan.zip) ```z-scan.zip``` containing the executable files*
-
-2. Unzip ```zscan_fit.zip```
-
-*Alternatively, you can [download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the entire repository:
+1. [Download](https://github.com/BartSmeets/zscan_fit/archive/refs/heads/main.zip) or clone the repository:
     
 ```bash
 git clone https://github.com/BartSmeets/zscan_fit.git
 ```
 
-in which case the installation of the dependencies is required:
+2. Install the required packages:
 
 ```
 pip install -r requirements.txt
