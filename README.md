@@ -54,13 +54,7 @@ By running the program, an additional file is generated that is used to provide 
 
 ### How to use
 
-1. Run: ```./bin/normalise_data.exe``` (```z-scan.zip```) or ```./normalise_data/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/normalise_data_exe.png)
-
-2. Select one or multiple data files
-
-3. Press 'run'
+1. Follow the steps in ```normalise_data.ipynb```
 
 
 ## Z-Scan fit
@@ -90,12 +84,13 @@ By running the program, a ```.txt``` containing the fitted model parameters is e
 
 [![Build with](https://img.shields.io/badge/Build%20with-Python%203.8-blue)](https://www.python.org/])
 
-### Required packages (only when running from repository)
+### Required packages
 * numpy
 * pandas
 * matplotlib.pyplot
 * scipy.optimize
 * scipy.signal
+* scikit-learn
 
 ### Installation
 
