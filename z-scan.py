@@ -18,7 +18,7 @@ fig_show = plt.figure()
 PARAMETER_DATA = [0, 0, 0, 0, 0, 0]
 
 def browse_button():
-    global MEASUREMENT, PARAMETER_DATA, FILE_NAME, DIRECTORY, TITLE, fig1
+    global MEASUREMENT, PARAMETER_DATA, FILE_NAME, DIRECTORY, TITLE, fig1, canvas
 
     # Load data
     MEASUREMENT, PARAMETER_DATA, FILE_NAME, DIRECTORY = zscan.general.load(file)
@@ -36,7 +36,7 @@ def browse_button():
     return
 
 def run():
-    global fig2, fig2_1, fig2_2, fig3, OUTPUT_STRING, TITLE
+    global fig2, fig2_1, fig2_2, fig3, canvas, OUTPUT_STRING, TITLE
     # Read Input
     ## First Guess
     Z0_0 = float(z0.get())
@@ -84,6 +84,8 @@ def run():
         MEASUREMENT, FILE_NAME, FIT_TYPE, N_RUNS, P_BEST, EXPERIMENT_PARAM, RUNS)
 
     # Place figure in window
+    for item in canvas.get_tk_widget().find_all():
+       canvas.get_tk_widget().delete(item)
     canvas = FigureCanvasTkAgg(fig2, master = figure_frame)
     canvas.draw()
     canvas.get_tk_widget().grid(row=0, column=0, columnspan=3)
