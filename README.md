@@ -12,9 +12,9 @@ All code necessary to analyse a z-scan measurement and fit the data according to
 
 ## General information
 
-This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/thesis.pdf) for methodology of the measurment and documentation of the code.
+This project has been part of my thesis for the degree of [Master of Science in Nanoscience, Nanotechnology and Nanoengineering](https://www.kuleuven.be/programmes/master-nanoscience-nanotechnology-nanoengineering) at KU Leuven. Read the [thesis report](/docs/MasterThesis_BartSmeets_final.pdf) for methodology of the measurment and documentation of the code.
 
-The code has been split into functional parts:
+The code has been split into four functional parts:
 * [beam profile](#beam-profile)
 * [power measurement](#power-measurement)
 * [normalise data](#normalise-data)
@@ -22,17 +22,11 @@ The code has been split into functional parts:
 
 ## Beam profile
 
-The first step of doing a z-scan measurement is to know the properties of the beam. The program generates a ```.txt``` containting the beam properties
+The first step of doing a z-scan measurement is to know the properties of the beam. The program generates a ```.txt``` containting the beam properties.
 
 ### How to use
 
-1. Run ```./bin/beam_profile.exe``` (```z-scan.zip```) or ```./beam_profile/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/beam_profile_exe.png)
-
-2. Select the folder that contains and enter the wavelength and stepsize of the measurement in the window
-
-3. Press 'run'
+1. Follow the steps in ```beam_profile.ipynb```
 
 ## Power measurement
 
