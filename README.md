@@ -36,13 +36,7 @@ The program reads the oscilloscope data and exports a ```.txt``` containing the 
 
 ### How to use
 
-1. Run: ```./bin/power_measurement.exe``` (```z-scan.zip```) or ```./power_measurement/window.py``` (repository)
-
-![screenshot](https://github.com/BartSmeets/zscan_fit/blob/main/images/power_measurement_exe.png)
-
-2. Select the oscilloscope data file
-
-3. Press 'run'
+1. Follow the steps in ```power_measurement.ipynb```
 
 ## Normalise data
 
