@@ -39,10 +39,10 @@ def run():
     global fig2, fig2_1, fig2_2, fig3, canvas, OUTPUT_STRING, TITLE
     # Read Input
     ## First Guess
-    Z0_0 = float(z0.get())
-    I_S1_0 = float(Is1.get())
-    I_S2_0 = float(Is2.get())
-    BETA_0 = float(beta.get())
+    Z0_0 = float(z0.get())  # mm
+    I_S1_0 = float(Is1.get())   # W/cm2
+    I_S2_0 = float(Is2.get())   # W/cm2
+    BETA_0 = float(beta.get()) * 10 # mm/W
     ## Model Parameters
     [L, ALPHA0, I0, Z_R, _, _] = PARAMETER_DATA
     N_RUNS = int(n_runs.get())
@@ -157,26 +157,26 @@ z0_label.grid(row=0, column=0, pady=5, sticky=tk.E)
 z0_content.grid(row=0, column=1, pady=5)
 z0_unit_label.grid(row=0, column=2, pady=5, sticky=tk.W)
 ### Is1
-Is1 = tk.StringVar(initial_frame, '1e6')
+Is1 = tk.StringVar(initial_frame, '1e9')
 Is1_label = ttk.Label(initial_frame, text='Is1 = ')
 Is1_content = ttk.Entry(initial_frame, textvariable=Is1)
-Is1_unit_label = ttk.Label(initial_frame, text='W/mm2')
+Is1_unit_label = ttk.Label(initial_frame, text='W/cm2')
 Is1_label.grid(row=1, column=0, pady=5, sticky=tk.E)
 Is1_content.grid(row=1, column=1, pady=5)
 Is1_unit_label.grid(row=1, column=2, pady=5, sticky=tk.W)
 ### Is2
-Is2 = tk.StringVar(initial_frame, '1e-6')
+Is2 = tk.StringVar(initial_frame, '1e9')
 Is2_label = ttk.Label(initial_frame, text='Is2 = ')
 Is2_content = ttk.Entry(initial_frame, textvariable=Is2)
-Is2_unit_label = ttk.Label(initial_frame, text='W/mm2')
+Is2_unit_label = ttk.Label(initial_frame, text='W/cm2')
 Is2_label.grid(row=2, column=0, pady=5, sticky=tk.E)
 Is2_content.grid(row=2, column=1, pady=5)
 Is2_unit_label.grid(row=2, column=2, pady=5, sticky=tk.W)
 ### Beta
-beta = tk.StringVar(initial_frame, '1e-6')
+beta = tk.StringVar(initial_frame, '1e-9')
 beta_content = ttk.Entry(initial_frame, textvariable=beta)
 beta_label = ttk.Label(initial_frame, text='beta = ')
-beta_unit_label = ttk.Label(initial_frame, text='mm/W')
+beta_unit_label = ttk.Label(initial_frame, text='cm/W')
 beta_label.grid(row=3, column=0, pady=5, sticky=tk.E)
 beta_content.grid(row=3, column=1, pady=5)
 beta_unit_label.grid(row=3, column=2, pady=5, sticky=tk.W)

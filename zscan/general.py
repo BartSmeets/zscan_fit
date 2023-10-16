@@ -48,7 +48,7 @@ def load(file):
     W0 = float(PARAMETER_DATA['W0']) * 1e-3   # Convert um to mm
     E_PULSE = float(PARAMETER_DATA['Pulse Energy']) * 1e-6    # Convert uJ to J
     P_LASER = E_PULSE / PULSE_WIDTH
-    I0 = 2*P_LASER / (np.pi * W0**2)
+    I0 = 2*P_LASER / (np.pi * W0**2) * 100  # W/cm2
     L = float(PARAMETER_DATA['L']) * 10   # Convert cm to mm
 
     PARAMETER_DATA = [L, ALPHA0, I0, Z_R, W0, E_PULSE]
@@ -115,14 +115,14 @@ def generate_plots(MEASUREMENT, FILE_NAME, FIT_TYPE, N_RUNS, P_BEST, EXPERIMENT_
     ax2_2.set_xlabel('z [mm]')
     ax2_2.set_ylabel('Normalised Transmittance')
     ax2_2.set_title(TITLE)
-    ax2_3.set_ylabel(r'Intensity [W/mm$^{2}$]', color='red')
+    ax2_3.set_ylabel(r'Intensity [W/cm$^{2}$]', color='red')
     ax2_3.tick_params(axis='y', labelcolor='red')
 
     # T(I)
     fig2_1, ax2_1 = plt.subplots()
     zscan.export.plot.TI(ax2_1, Z_DATA, I_DATA, Z_PLOT, SIGMA_PLOT, FIT_TYPE, P_BEST, EXPERIMENT_PARAM)
     ##Labels
-    ax2_1.set_xlabel(r'Intensity [W/mm$^{2}$]')
+    ax2_1.set_xlabel(r'Intensity [W/cm$^{2}$]')
     ax2_1.set_ylabel('Normalised Transmittance')
     ax2_1.set_title(TITLE)
     ax2_1.legend()
