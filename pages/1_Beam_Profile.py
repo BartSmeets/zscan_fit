@@ -6,35 +6,31 @@ from tkinter import filedialog
 import glob
 import utils.beam_profile as bp
 
-def width(z, w0: float, z0: float, M2: float, wavelength: float):
-    """Returns the beam radius (width) of the beam at a given position
-    
-    PARAMETERS
-
-    z: z-position
-    w0: beam radius at the focal point
-    z0: z-position of the focal point
-    M2: Quality-Factor
-    wavelength: wavelength of the beam
-    """
-    wavelength = wavelength * 1e-3    # nm to um
-    z = z * 1e3    # mm to um
-    zR = np.pi*(w0**2) / (M2 * wavelength)
-    root = 1 + ((z-z0)/zR)**2
-    return w0 * np.sqrt(root)    # unit um
-
 if 'wavelength' not in st.session_state:
     st.session_state['wavelength'] = 532.    # nm
 if 'step_size' not in st.session_state:
     st.session_state['step_size'] = 1.   # mm
 if 'profile_directory' not in st.session_state:
     st.session_state['profile_directory'] = os.environ.get('HOMEPATH')
+if 'exclude' not in st.session_state:
+    st.session_state['exclude'] = []
 if 'measurements' not in st.session_state:
     st.session_state['measurements'] = []
 if 'w' not in st.session_state:
-    st.session_state['w'] = 0
+    st.session_state['w'] = []
 if 'sigma_w' not in st.session_state:
-    st.session_state['sigma_w'] = 0
+    st.session_state['sigma_w'] = []
+if 'w0' not in st.session_state:
+    st.session_state['w0'] = []
+if 'z0' not in st.session_state:
+    st.session_state['z0'] = []
+if 'zR' not in st.session_state:
+    st.session_state['zR'] = []
+if 'M2' not in st.session_state:
+    st.session_state['M2'] = []
+if 'gaussian_fig' not in st.session_state:
+    st.session_state['gaussian_fig'] = None
+
 
 # User inputs
 def select_folder():
@@ -50,7 +46,7 @@ with st.container(border = True):
     st.header('User Inputs')
 
     # Directory
-    st.write('Directory')
+    st.write('Data Directory')
     col1, col2 = st.columns([5,1])
     with col1:
         st.session_state['profile_directory'] = st.text_input('Directory', value=st.session_state['profile_directory'], label_visibility='collapsed')
@@ -65,16 +61,41 @@ with st.container(border = True):
         st.number_input('Step Size (mm)', min_value=0., key='step_size')
 
 
-with st.container(border=True):
+tab1, tab2 = st.tabs(['Gaussian Fit', 'Beam Profile Fit'])
+
+# Gaussian Fit
+with tab1:
     st.header('Gaussian Fits')
     gaussian = lambda x, a, b, c: a * np.exp(-(x-b)**2 / (2 * c**2))
-    st.button('Run', on_click=bp.gaussian_fit, args=[all_files])
-    with st.expander('Show Figure'):
-        try:
-            st.pyplot(bp.fig_gaussian(all_files))
-        except:
-            st.warning('Something went wrong. Have you run the fit first?')
 
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        options = np.arange(0, len(all_files), 1)
+        st.multiselect('Exclude Data', options, key='exclude')
+        if len(all_files) > 0:
+            if st.button('Run', key='gaussian fit'):
+                with col2:
+                    with st.spinner():
+                        bp.gaussian_fit(all_files)
+                        st.pyplot(bp.fig_gaussian(all_files))
+        else:
+            st.button('Run', key='gaussian fit', on_click=bp.gaussian_fit, args=[all_files], disabled=True)
+            with col2:
+                st.pyplot(st.session_state['gaussian_fig'])
+
+    
+with tab2:
+    st.header('Beam Profile Fit')
+
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        if len(st.session_state['w']) > 0:
+            st.button('Run', key='bp fit', on_click=bp.bp_fit)
+        else:
+            st.button('Run', key='bp fit',on_click=bp.bp_fit, disabled=True)
+    with col2:
+        if len(st.session_state['w0']) > 0:
+            st.pyplot(bp.fig_bp())
 
     
     
