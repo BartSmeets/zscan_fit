@@ -78,8 +78,11 @@ with tab1:
                     with st.spinner():
                         bp.gaussian_fit(all_files)
                         st.pyplot(bp.fig_gaussian(all_files))
+            else:
+                with col2:
+                    st.pyplot(st.session_state['gaussian_fig'])
         else:
-            st.button('Run', key='gaussian fit', on_click=bp.gaussian_fit, args=[all_files], disabled=True)
+            st.button('Run', key='gaussian fit', disabled=True)
             with col2:
                 st.pyplot(st.session_state['gaussian_fig'])
 
@@ -87,12 +90,18 @@ with tab1:
 with tab2:
     st.header('Beam Profile Fit')
 
-    col1, col2 = st.columns([1, 5])
+    col1, col2 = st.columns([2, 5])
     with col1:
         if len(st.session_state['w']) > 0:
             st.button('Run', key='bp fit', on_click=bp.bp_fit)
         else:
             st.button('Run', key='bp fit',on_click=bp.bp_fit, disabled=True)
+
+        with st.container(border=True):
+            st.write(f'w$_0$ = ({st.session_state['w0'][0]:.1f} ± {st.session_state['w0'][1]:.1f}) μm')
+            st.write(f'z$_0$ = ({st.session_state['z0'][0]*1e-3:.2f} ± {st.session_state['z0'][1]*1e-3:.2f}) mm')
+            st.write(f'z$_R$ = ({st.session_state['zR'][0]:.0f} ± {st.session_state['zR'][1]:.0f}) μm')
+            st.write(f'M$_2$ = ({st.session_state['M2'][0]:.1f} ± {st.session_state['M2'][1]:.1f})')
     with col2:
         if len(st.session_state['w0']) > 0:
             st.pyplot(bp.fig_bp())

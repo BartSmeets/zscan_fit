@@ -108,13 +108,12 @@ def fig_gaussian(all_files):
         ## Plot x axis
         ax[i, 0].plot(measurement.x, measurement.Ix, 'o', label='Data', color='#008176')
         ax[i, 0].plot(x_linspace, gaussian(x_linspace, *measurement.x_fit), label='Fit', color='#c1272c')
-        ax[i, 0].set_xlabel(f'x$_{{{i}}}$ ($\mu$m)', fontsize=15)
+        ax[i, 0].set_xlabel(f'x$_{{{i}}}$ (μm)', fontsize=15)
         ax[i, 0].set_ylabel('Normalised Intensity', fontsize=15)
         ## Plot y axis
         ax[i, 1].plot(measurement.y, measurement.Iy, 'o', label='Data', color='#008176')
         ax[i, 1].plot(y_linspace, gaussian(y_linspace, *measurement.y_fit), label='Fit', color='#c1272c')
-        ax[i, 1].set_xlabel(f'y$_{{{i}}}$ ($\mu$m)', fontsize=15)
-        ax[i, 1].set_ylabel('Normalised Intensity', fontsize=15)
+        ax[i, 1].set_xlabel(f'y$_{{{i}}}$ (μm)', fontsize=15)
 
         plt.xticks(fontsize=12.5)
         plt.yticks(fontsize=12.5)
@@ -174,8 +173,8 @@ def fig_bp():
     ### Labels
 
     plt.legend()
-    plt.ylabel('Beam width [$\mu$m]', fontsize=15)
-    plt.xlabel('z [mm]', fontsize=15)
+    plt.ylabel('Beam width (μm)', fontsize=15)
+    plt.xlabel('z - z$_0$ (mm)', fontsize=15)
 
     plt.xticks(fontsize=12.5)
     plt.yticks(fontsize=12.5)
