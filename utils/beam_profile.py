@@ -3,6 +3,9 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
+import toml
+from datetime import datetime
+import os
 
 gaussian = lambda x, a, b, c: a * np.exp(-(x-b)**2 / (2 * c**2))
 
@@ -182,4 +185,38 @@ def fig_bp():
     ax2.xaxis.set_minor_locator(AutoMinorLocator())
     ax2.yaxis.set_minor_locator(AutoMinorLocator())
 
+    st.session_state['bp_fig'] = fig
     return fig
+
+
+def export():
+    # Create export directory
+    timeCode = datetime.now()
+    export_directory = st.session_state['profile_directory'] + "/OUTPUT_BEAM_PROFILE_"  + timeCode.strftime("%Y%m%d-%H%M")
+    try:
+        os.mkdir(export_directory)
+    except:
+        pass
+
+    fitting_results = {
+        'Gaussian Fitting': {
+            'w0': st.session_state['w0'],
+            'z0': np.array(st.session_state['z0'])*1e-3,
+            'zR': st.session_state['zR'],
+            'M2': st.session_state['M2']
+        }
+    }
+
+    toml_string = toml.dumps(fitting_results)
+    toml_lines = toml_string.split('\n')
+    comments = [toml_lines[0],
+                '# Observable   [Value, Std]    Unit',
+                f'{toml_lines[1]}   # um',
+                f'{toml_lines[2]}   # mm',
+                f'{toml_lines[3]}   # um',
+                toml_lines[4]]
+
+    with open(export_directory + '/RESULTS_BEAM_PROFILE.toml', 'w') as f:
+        f.write('\n'.join(comments))
+    st.session_state['gaussian_fig'].savefig(export_directory + "/OUTPUT_WIDTHS.png", bbox_inches='tight')
+    st.session_state['bp_fig'].savefig(export_directory + "/OUTPUT_BEAM_PROFILE.png", bbox_inches='tight')

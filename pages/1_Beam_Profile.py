@@ -30,6 +30,8 @@ if 'M2' not in st.session_state:
     st.session_state['M2'] = []
 if 'gaussian_fig' not in st.session_state:
     st.session_state['gaussian_fig'] = None
+if 'bp_fig' not in st.session_state:
+    st.session_state['bp_fig'] = None
 
 
 # User inputs
@@ -105,6 +107,10 @@ with tab2:
     with col2:
         if len(st.session_state['w0']) > 0:
             st.pyplot(bp.fig_bp())
+
+    with col1:
+        if st.button('Export', disabled=(len(st.session_state['w0']) == 0)):
+            bp.export()
 
     
     
