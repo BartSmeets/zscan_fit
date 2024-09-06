@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import filedialog
 import glob
 import utils.beam_profile as bp
+import matplotlib.pyplot as plt
 
 if 'wavelength' not in st.session_state:
     st.session_state['wavelength'] = 532.    # nm
@@ -21,18 +22,17 @@ if 'w' not in st.session_state:
 if 'sigma_w' not in st.session_state:
     st.session_state['sigma_w'] = []
 if 'w0' not in st.session_state:
-    st.session_state['w0'] = []
+    st.session_state['w0'] = [np.nan, np.nan]
 if 'z0' not in st.session_state:
-    st.session_state['z0'] = []
+    st.session_state['z0'] = [np.nan, np.nan]
 if 'zR' not in st.session_state:
-    st.session_state['zR'] = []
+    st.session_state['zR'] = [np.nan, np.nan]
 if 'M2' not in st.session_state:
-    st.session_state['M2'] = []
+    st.session_state['M2'] = [np.nan, np.nan]
 if 'gaussian_fig' not in st.session_state:
-    st.session_state['gaussian_fig'] = None
+    st.session_state['gaussian_fig'] = plt.figure()
 if 'bp_fig' not in st.session_state:
-    st.session_state['bp_fig'] = None
-
+    st.session_state['bp_fig'] = plt.figure()
 
 # User inputs
 def select_folder():
@@ -79,7 +79,8 @@ with tab1:
                 with col2:
                     with st.spinner():
                         bp.gaussian_fit(all_files)
-                        st.pyplot(bp.fig_gaussian(all_files))
+                        bp.fig_gaussian(all_files)
+                        st.pyplot(st.session_state['gaussian_fig'])
             else:
                 with col2:
                     st.pyplot(st.session_state['gaussian_fig'])
@@ -95,22 +96,23 @@ with tab2:
     col1, col2 = st.columns([2, 5])
     with col1:
         if len(st.session_state['w']) > 0:
-            st.button('Run', key='bp fit', on_click=bp.bp_fit)
+            if st.button('Run', key='bp fit', on_click=bp.bp_fit):
+                bp.fig_bp()
         else:
             st.button('Run', key='bp fit',on_click=bp.bp_fit, disabled=True)
 
         with st.container(border=True):
-            st.write(f'w$_0$ = ({st.session_state['w0'][0]:.1f} ± {st.session_state['w0'][1]:.1f}) μm')
-            st.write(f'z$_0$ = ({st.session_state['z0'][0]*1e-3:.2f} ± {st.session_state['z0'][1]*1e-3:.2f}) mm')
-            st.write(f'z$_R$ = ({st.session_state['zR'][0]:.0f} ± {st.session_state['zR'][1]:.0f}) μm')
-            st.write(f'M$_2$ = ({st.session_state['M2'][0]:.1f} ± {st.session_state['M2'][1]:.1f})')
+            if not np.isnan(st.session_state['w0'][0]):
+                st.write(f'w$_0$ = ({st.session_state['w0'][0]:.1f} ± {st.session_state['w0'][1]:.1f}) μm')
+                st.write(f'z$_0$ = ({st.session_state['z0'][0]*1e-3:.2f} ± {st.session_state['z0'][1]*1e-3:.2f}) mm')
+                st.write(f'z$_R$ = ({st.session_state['zR'][0]:.0f} ± {st.session_state['zR'][1]:.0f}) μm')
+                st.write(f'M$_2$ = ({st.session_state['M2'][0]:.1f} ± {st.session_state['M2'][1]:.1f})')
     with col2:
-        if len(st.session_state['w0']) > 0:
-            st.pyplot(bp.fig_bp())
+        if not np.isnan(st.session_state['w0'][0]):
+            st.pyplot(st.session_state['bp_fig'])
 
     with col1:
-        if st.button('Export', disabled=(len(st.session_state['w0']) == 0)):
-            bp.export()
+        st.button('Export', disabled=np.isnan(st.session_state['w0'][0]), on_click=bp.export)
 
     
     
