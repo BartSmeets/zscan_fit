@@ -45,6 +45,9 @@ def select_folder():
     root.destroy()
 
 st.title('Beam Profile Fit', anchor=False)
+st.markdown('''
+            This page fits the parameters describing the beam profile
+            ''')
 st.header('How to Use?', anchor=False)
 st.markdown('''
             1. Measure the beam profile at different positions, separated by a constant step size

@@ -241,7 +241,7 @@ def export():
         pass
 
     fitting_results = {
-        'Gaussian Fitting': {
+        'Beam Profile Fitting': {
             'w0': st.session_state['w0'],
             'z0': np.array(st.session_state['z0'])*1e-3,
             'zR': st.session_state['zR'],
