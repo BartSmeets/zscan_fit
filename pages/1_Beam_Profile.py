@@ -44,8 +44,17 @@ def select_folder():
                                                                     parent=root)
     root.destroy()
 
+st.title('Beam Profile Fit', anchor=False)
+st.header('How to Use?', anchor=False)
+st.markdown('''
+            1. Measure the beam profile at different positions, separated by a constant step size
+            1. Enter the user inputs
+            2. Fit the beam radii at every position
+            3. Fit the beam profile
+            ''')
+
 with st.container(border = True):
-    st.header('User Inputs')
+    st.header('User Inputs', anchor=False)
 
     # Directory
     st.write('Data Directory')
@@ -63,11 +72,12 @@ with st.container(border = True):
         st.number_input('Step Size (mm)', min_value=0., key='step_size')
 
 
-tab1, tab2 = st.tabs(['Gaussian Fit', 'Beam Profile Fit'])
+tab1, tab2 = st.tabs(['Beam Radii Fits', 'Beam Profile Fit'])
 
 # Gaussian Fit
 with tab1:
-    st.header('Gaussian Fits')
+    st.header('Beam Radii Fits', anchor=False)
+    st.markdown(''' ''')
     gaussian = lambda x, a, b, c: a * np.exp(-(x-b)**2 / (2 * c**2))
 
     col1, col2 = st.columns([1, 5])
@@ -91,7 +101,7 @@ with tab1:
 
     
 with tab2:
-    st.header('Beam Profile Fit')
+    st.header('Beam Profile Fit', anchor=False)
 
     col1, col2 = st.columns([2, 5])
     with col1:
