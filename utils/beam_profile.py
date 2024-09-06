@@ -68,7 +68,11 @@ def gaussian_fit(all_files: list) -> None:
 
     # Load (and fit) all files 
     for i, file in enumerate(all_files):
-        measurement = np.loadtxt(file, skiprows=11)
+        try:
+            measurement = np.loadtxt(file, skiprows=11)
+        except Exception as e:
+            st.error('Error while loading '+ file)
+            raise
         loaded_data = data(measurement)
         if i in st.session_state['exclude']:
             measurement_lst.append(loaded_data)
