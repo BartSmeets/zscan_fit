@@ -26,6 +26,11 @@ def width(z, w0: float, z0: float, M2: float, wavelength: float):
         root = 1 + ((z-z0)/zR)**2
         return w0 * np.sqrt(root)    # unit um
 
+
+'''
+Fitting models
+'''
+
 def gaussian_fit(all_files: list) -> None:
     '''
     Fit a Gaussian beam profile and saves the results in st.session_state:
@@ -36,7 +41,9 @@ def gaussian_fit(all_files: list) -> None:
     ## Argument:
     - all_files: list containing all file names
     '''
-    class data:
+
+    # Initialise data class for data loading and fitting
+    class data: 
         def __init__(self, measurement):
             self.x = measurement[:, 0]
             self.Ix = measurement[:, 1] / 100
@@ -53,11 +60,13 @@ def gaussian_fit(all_files: list) -> None:
             self.wx = 2* abs(self.x_fit[2])    # e^-2 definition beam width
             self.wy = 2* abs(self.y_fit[2])
 
+    # Initialise
     measurement_lst = []
     w = np.zeros(len(all_files))    # First column for beam widths; Second column for error on beam widths
     sigma_w = np.zeros(len(w))    # First column for beam widths; Second column for error on beam widths
     p0x = p0y = [1,0,100]    # First guess for fitting
 
+    # Load (and fit) all files 
     for i, file in enumerate(all_files):
         measurement = np.loadtxt(file, skiprows=11)
         loaded_data = data(measurement)
@@ -65,6 +74,7 @@ def gaussian_fit(all_files: list) -> None:
             measurement_lst.append(loaded_data)
             continue
         
+        ## Fit all files
         loaded_data.fit(p0x, p0y)
         
         # Check if Gaussian fit has failed
@@ -84,11 +94,58 @@ def gaussian_fit(all_files: list) -> None:
                             + loaded_data.wx**2 / (loaded_data.wx*loaded_data.wy) * loaded_data.sigma_y**2)    # Std
         measurement_lst.append(loaded_data)
 
+    # Store
     st.session_state['measurements'] = measurement_lst
     st.session_state['w'] = w
     st.session_state['sigma_w'] = sigma_w
     return
+
+def bp_fit():
+    '''
+    Fits the beam profile
+
+    ## Adjusts st.session_state:
+    - w0: beam waist and std
+    - z0: the focal point and std
+    - zR: the Rayleigh length and std
+    - M2: the quality factor and std
+    '''
+
+    # Initialise
+    wavelength = st.session_state['wavelength']
+    w = st.session_state['w']
+    z = st.session_state['step_size'] * np.array(range(len(w)))    # unit mm
+    ## Filter the zeroes
+    mask = (w!=0) 
+    w = w[mask]
+    z = z[mask]
+    sigma_w = st.session_state['sigma_w'][mask]
+
+    # Fit
+    w_param, w_var  = curve_fit(lambda x, w0, z0, M2: width(x, w0, z0, M2, wavelength), z, w, [10,10e3,1], 
+                     sigma=sigma_w, bounds=([0,-np.inf,1],[np.inf,np.inf,np.inf]), absolute_sigma=True)
+    [w0, z0, M2] =  w_param
+    zR = np.pi*(w0**2) / (M2*wavelength*1e-3)    # Rayleigh length
+
+    # Error propagation
+    sigma_w = np.sqrt(np.diag(w_var)[0])    # Error on beam waist
+    sigma_z = np.sqrt(np.diag(w_var)[1])*1e-3    # Error on z-position of focal point
+    sigma_M2 = np.sqrt(np.diag(w_var)[2])    # Error on M^2
+    dz_dw = (2*np.pi*10) / (M2*wavelength*1e-3)
+    dz_dM2 = (np.pi*(10**2)) / (wavelength*1e-3*(M2**2))
+    sigma_zR = np.sqrt((dz_dw**2)*(sigma_w**2) + (dz_dM2**2)*(sigma_M2**2))    # Error on Rayleigh length
+
+    # Store
+    st.session_state['w0'] = [w0, sigma_w]
+    st.session_state['z0'] = [z0, sigma_z]
+    st.session_state['zR'] = [zR, sigma_zR]
+    st.session_state['M2'] = [M2, sigma_M2]
+    return
+
     
+'''
+Generate Figures
+'''
 
 def fig_gaussian(all_files):
     '''Generate the figure of the Gaussian fit
@@ -121,75 +178,60 @@ def fig_gaussian(all_files):
         plt.xticks(fontsize=12.5)
         plt.yticks(fontsize=12.5)
     
+    # Store
     st.session_state['gaussian_fig'] = fig
     return fig
 
-def bp_fit():
-    wavelength = st.session_state['wavelength']
-    w = st.session_state['w']
-    z = st.session_state['step_size'] * np.array(range(len(w)))    # unit mm
-    mask = (w!=0)
-
-    w = w[mask]
-    z = z[mask]
-    sigma_w = st.session_state['sigma_w'][mask]
-
-    w_param, w_var  = curve_fit(lambda x, w0, z0, M2: width(x, w0, z0, M2, wavelength), z, w, [10,10e3,1], 
-                     sigma=sigma_w, bounds=([0,-np.inf,1],[np.inf,np.inf,np.inf]), absolute_sigma=True)
-    [w0, z0, M2] =  w_param
-    zR = np.pi*(w0**2) / (M2*wavelength*1e-3)    # Rayleigh length
-
-    # Error propagation
-    sigma_w = np.sqrt(np.diag(w_var)[0])    # Error on beam waist
-    sigma_z = np.sqrt(np.diag(w_var)[1])*1e-3    # Error on z-position of focal point
-    sigma_M2 = np.sqrt(np.diag(w_var)[2])    # Error on M^2
-    dz_dw = (2*np.pi*10) / (M2*wavelength*1e-3)
-    dz_dM2 = (np.pi*(10**2)) / (wavelength*1e-3*(M2**2))
-    sigma_zR = np.sqrt((dz_dw**2)*(sigma_w**2) + (dz_dM2**2)*(sigma_M2**2))    # Error on Rayleigh length
-
-    st.session_state['w0'] = [w0, sigma_w]
-    st.session_state['z0'] = [z0, sigma_z]
-    st.session_state['zR'] = [zR, sigma_zR]
-    st.session_state['M2'] = [M2, sigma_M2]
 
 def fig_bp():
+    '''Generate the figure of the beam profile
+
+    ## Returns:
+    - fig: matplotlib figure object
+    '''
     fig = plt.figure()
     ax2 = plt.axes()
 
+    # Initialise
     w = st.session_state['w']
     z = st.session_state['step_size'] * np.array(range(len(w)))    # unit mm
-
-    mask = (w!=0)
-    w = w[mask]
-    z = z[mask]
-
     [z0, _] = st.session_state['z0']
     [w0, _] = st.session_state['w0']
     [M2, _] = st.session_state['M2']
+    # Mask all zeroes
+    mask = (w!=0)
+    w = w[mask]
+    z = z[mask]
+    ## Generate x-values for plotting
     z_plot = np.linspace(0, z[-1], 500)
 
-    ### Plot
+    # Plot
     plt.plot(z-z0*1e-3, w,'.', label='Data', color='#008176')
     plt.plot(z_plot-z0*1e-3, width(z_plot, w0, z0, M2, st.session_state['wavelength']), 
              label='Fit', color='#c1272c')
-    #plt.text(0,10,textstr)
-    ### Labels
-
+    
+    # Labels
     plt.legend()
     plt.ylabel('Beam width (μm)', fontsize=15)
     plt.xlabel('z - z$_0$ (mm)', fontsize=15)
-
     plt.xticks(fontsize=12.5)
     plt.yticks(fontsize=12.5)
-
     ax2.xaxis.set_minor_locator(AutoMinorLocator())
     ax2.yaxis.set_minor_locator(AutoMinorLocator())
 
+    # Store
     st.session_state['bp_fig'] = fig
     return fig
 
 
+'''
+Export Results
+'''
+
 def export():
+    '''
+    Export the results in an newly generated output folder
+    '''
     # Create export directory
     timeCode = datetime.now()
     export_directory = st.session_state['profile_directory'] + "/OUTPUT_BEAM_PROFILE_"  + timeCode.strftime("%Y%m%d-%H%M")
