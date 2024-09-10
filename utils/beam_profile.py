@@ -45,14 +45,21 @@ def gaussian_fit(all_files: list) -> None:
     # Initialise data class for data loading and fitting
     class data: 
         def __init__(self, measurement):
-            self.x = measurement[:, 0]
-            self.Ix = measurement[:, 1] / 100
-            self.y = measurement[:, 2]
-            self.Iy = measurement[:, 3] / 100
+            x = measurement[:, 0]
+            Ix = measurement[:, 1] / 100
+            y = measurement[:, 2]
+            Iy = measurement[:, 3] / 100
+
+            self.x = x[~np.isnan(x)]
+            self.Ix = Ix[~np.isnan(Ix)]
+            self.y = y[~np.isnan(y)]
+            self.Iy = Iy[~np.isnan(Iy)]
 
         def fit(self, p0x, p0y):         
-            self.x_fit, _ = curve_fit(gaussian, self.x, self.Ix, p0x, bounds=[[0,-np.inf,0],[np.inf,np.inf,np.inf]])
-            self.y_fit, _ = curve_fit(gaussian, self.y, self.Iy, p0y, bounds=[[0,-np.inf,0],[np.inf,np.inf,np.inf]])
+            self.x_fit, _ = curve_fit(gaussian, self.x, self.Ix, p0x, 
+                                      bounds=[[0,-np.inf,0],[np.inf,np.inf,np.inf]])
+            self.y_fit, _ = curve_fit(gaussian, self.y, self.Iy, p0y, 
+                                      bounds=[[0,-np.inf,0],[np.inf,np.inf,np.inf]])
 
             self.sigma_x = np.sqrt(self.x_fit[2]/(2*np.sqrt(2*np.pi)*self.x_fit[0]))
             self.sigma_y = np.sqrt(self.y_fit[2]/(2*np.sqrt(2*np.pi)*self.y_fit[0]))
@@ -69,7 +76,7 @@ def gaussian_fit(all_files: list) -> None:
     # Load (and fit) all files 
     for i, file in enumerate(all_files):
         try:
-            measurement = np.loadtxt(file, skiprows=11)
+            measurement = np.genfromtxt(file, skip_header=11, delimiter='\t', filling_values=np.nan)
         except Exception as e:
             st.error('Error while loading '+ file)
             raise
