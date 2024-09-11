@@ -2,14 +2,15 @@ import streamlit as st
 from utils.normalise import data_structure
 
 # Initialise User Inputs / Session States
-if 'data' not in st.session_state:
-    st.session_state['data'] = data_structure()
+if 'data_norm' not in st.session_state:
+    st.session_state['data_norm'] = data_structure()
 if 'OA' not in st.session_state:
     st.session_state['OA'] = 'CH1'
 if 'CA' not in st.session_state:
     st.session_state['CA'] = 'CH2'
 if 'lambda' not in st.session_state:
     st.session_state['lambda'] = 1e6
+df = st.session_state['data_norm']
 
 # Title
 st.title('Normalise Data')
@@ -31,19 +32,19 @@ with st.container(border = True):
     ## Select files
     col1, col2 = st.columns([1,5])
     with col1:
-        if st.button('Select Files', on_click=st.session_state['data'].select):
+        if st.button('Select Files', on_click=df.select):
             try:
-                st.session_state['data'].load()
+                df.load()
             except ValueError:
-                st.session_state['data'].names = []    # Reset the loaded names
+                df.names = []    # Reset the loaded names
                 error = 'Data sets do not have the same number of data points.\
                          This is currently not supported.'
             else:
-                st.session_state['data'].update()   # Normalise data and generate figures
+                df.update()   # Normalise data and generate figures
     ## Show files     
     with col2:
         st.write('File Names:')
-        for name in st.session_state['data'].names:
+        for name in df.names:
             st.write(name)
     
     # Select Channel
@@ -61,18 +62,18 @@ with st.container(border = True):
 ## Raw Data
 with st.container(border=True):
     st.header('Raw Data', anchor=False)
-    st.pyplot(st.session_state['data'].fig_raw)
+    st.pyplot(df.fig_raw)
 
 ## Normalised Data
 with st.container(border=True):
     st.header('Normalised Data')
-    st.pyplot(st.session_state['data'].fig_norm)
+    st.pyplot(df.fig_norm)
     
     st.select_slider('λ (for baseline correction)', (1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9), 
                         key='lambda', 
-                        on_change=st.session_state['data'].update, 
-                        disabled=(st.session_state['data'].names == []))
-    st.button('Export', on_click=st.session_state['data'].export, 
-              disabled=(st.session_state['data'].names == []))
+                        on_change=df.update, 
+                        disabled=(df.names == []))
+    st.button('Export', on_click=df.export, 
+              disabled=(df.names == []))
     
 
