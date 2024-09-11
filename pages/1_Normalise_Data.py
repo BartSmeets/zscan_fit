@@ -7,6 +7,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
+from datetime import datetime
 
 class data:
     def __init__(self):
@@ -175,6 +176,62 @@ class data:
         self.plot_norm()
         self.plot_raw()
 
+    def export(self):
+        # Create export directory
+        timeCode = datetime.now()
+        export_folder = "/Normalised_Data_" + timeCode.strftime("%Y%m%d-%H%M%S")
+        export_directory = self.folder + export_folder
+        try:
+            os.mkdir(export_directory)
+        except:
+            pass
+        
+        # Save figures
+        self.fig_raw.savefig(export_directory + '/OUTPUT_RAW_DATA.png', bbox_inches='tight')
+        self.fig_norm.savefig(export_directory + '/OUTPUT_NORMALISED_DATA.png', bbox_inches='tight')
+        
+        # Intialise Open Aperture Data
+        OA_export = np.ndarray((len(self.z), 3))    # 0: z-position; 1: average OA; 2: errorbar
+        OA_export[:, 0] = self.z
+        OA_export[:, 1] = self.OA_norm[0]
+        OA_export[:, 2] = self.OA_norm[1]
+
+        # Intialise Closed Aperture Data
+        CA_export = np.ndarray((len(self.z), 3))    # 0: z-position; 1: average OA; 2: errorbar
+        CA_export[:, 0] = self.z
+        CA_export[:, 1] = self.CA_norm[0]
+        CA_export[:, 2] = self.CA_norm[1]
+
+        # Export Files
+        np.savetxt(export_directory + '/DATA_OA_AVERAGE.txt', OA_export)
+        np.savetxt(export_directory + '/DATA_CA_AVERAGE.txt', CA_export)
+
+        # Export normalised individual measurements
+        for i, name in enumerate(self.names):
+            ## Initialise data structure
+            file_oa_export = np.ndarray((len(self.z), 3))
+            file_ca_export = np.ndarray((len(self.z), 3))
+            ## Prepare file name
+            file_oa_string = export_directory + '/DATA_OA_' + name
+            file_ca_string = export_directory + '/DATA_CA_' + name
+            ## Store data in data structure
+            ### 0: z-position; 1: average OA; 2: errorbar
+            file_oa_export[:, 0] = self.df_norm[i, :, 0]
+            file_ca_export[:, 0] = self.df_norm[i, :, 0]
+            if st.session_state['OA'] == 'CH1':
+                file_oa_export[:, 1] = self.df_norm[i, :, 1]
+                file_ca_export[:, 1] = self.df_norm[i, :, 2]
+            else:
+                file_oa_export[:, 1] = self.df_norm[i, :, 2]
+                file_ca_export[:, 1] = self.df_norm[i, :, 1]
+            file_oa_export[:, 2] = self.OA_norm[1]
+            file_ca_export[:, 2] = self.CA_norm[1]
+            ## Export data
+            np.savetxt(file_oa_string, file_oa_export)
+            np.savetxt(file_ca_string, file_ca_export)
+        
+        # Open output folder
+        os.startfile(export_directory)
 
 if 'data' not in st.session_state:
     st.session_state['data'] = data()
@@ -242,6 +299,10 @@ with st.container(border=True):
     st.pyplot(st.session_state['data'].fig_norm)
     
     st.select_slider('λ (for baseline correction)', (1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9), 
-                     key='lambda', on_change=st.session_state['data'].update)
-
+                        key='lambda', 
+                        on_change=st.session_state['data'].update, 
+                        disabled=(st.session_state['data'].names == []))
+    st.button('Export', on_click=st.session_state['data'].export, 
+              disabled=(st.session_state['data'].names == []))
+    
 
