@@ -89,6 +89,7 @@ class data:
         ax[1,1].set_title('Closed Aperture (average)')
         ax[1,1].set_xlabel('z [mm]')
 
+
     def plot_norm(self):
         self.fig_norm, ax = plt.subplots(2, 2, figsize=(8,7))
 
@@ -104,6 +105,10 @@ class data:
         # Plot average of measurements
         ax[1, 0].errorbar(self.z, self.OA_norm[0], self.OA_norm[1],fmt= '.')
         ax[1, 1].errorbar(self.z, self.CA_norm[0], self.CA_norm[1], fmt='.')
+
+        # Draw line at 1
+        for i, j in np.ndindex(ax.shape):
+            ax[i,j].axhline(1, ls=':', color='grey')
 
         # Label axes
         ax[0,0].legend(bbox_to_anchor=(2.9,1))
@@ -165,6 +170,10 @@ class data:
             self.df_norm[i, :, 1] = self.df[i, :, 1] / arPLS(self.df[i, :, 1]).reshape(1,-1)
             self.df_norm[i, :, 2] = self.df[i, :, 2] / arPLS(self.df[i, :, 2]).reshape(1,-1)
 
+    def update(self):
+        self.normalise()
+        self.plot_norm()
+        self.plot_raw()
 
 
 if 'data' not in st.session_state:
@@ -174,7 +183,7 @@ if 'OA' not in st.session_state:
 if 'CA' not in st.session_state:
     st.session_state['CA'] = 'CH2'
 if 'lambda' not in st.session_state:
-    st.session_state['lambda'] = 1e4
+    st.session_state['lambda'] = 1e6
 
 
 st.title('Normalise Data')
@@ -189,7 +198,7 @@ st.markdown('''
             * Export separate Open Aperture and Closed Aperture data files
             ''')
 
-
+# User Inputs
 with st.container(border = True):
     st.header('User Inputs', anchor=False)
 
@@ -205,9 +214,7 @@ with st.container(border = True):
                 error = 'Data sets do not have the same number of data points.\
                          This is currently not supported.'
             else:
-                st.session_state['data'].plot_raw()
-                st.session_state['data'].normalise()
-                st.session_state['data'].plot_norm()
+                st.session_state['data'].update()
                 
     with col2:
         st.write('File Names:')
@@ -220,15 +227,21 @@ with st.container(border = True):
     with col2:
         st.selectbox('Closed Aperture', ['CH1', 'CH2'], key='CA')
 
+
     if 'error' in locals():
         st.error(error)
 
+# Raw Data
 with st.container(border=True):
     st.header('Raw Data', anchor=False)
     st.pyplot(st.session_state['data'].fig_raw)
 
+# Normalised Data
 with st.container(border=True):
     st.header('Normalised Data')
     st.pyplot(st.session_state['data'].fig_norm)
+    
+    st.select_slider('λ (for baseline correction)', (1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9), 
+                     key='lambda', on_change=st.session_state['data'].update)
 
 
