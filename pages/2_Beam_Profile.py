@@ -2,7 +2,8 @@ import streamlit as st
 import numpy as np
 import os
 from utils.beam_profile import data_structure
-import matplotlib.pyplot as plt
+
+st.set_page_config(layout='wide')
 
 if 'wavelength' not in st.session_state:
     st.session_state['wavelength'] = 532.    # nm
@@ -25,9 +26,9 @@ st.markdown('''
 st.header('How to Use?', anchor=False)
 st.markdown('''
             1. Measure the beam profile at different positions, separated by a constant step size
-            1. Enter the user inputs
-            2. Fit the beam radii at every position
-            3. Fit the beam profile
+            2. Enter the user inputs
+            3. Fit the beam radii at every position
+            4. Fit the beam profile
             ''')
 
 with st.container(border = True):

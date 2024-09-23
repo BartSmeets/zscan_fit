@@ -1,6 +1,8 @@
 import streamlit as st
 from utils.normalise import data_structure
 
+st.set_page_config(layout='wide')
+
 # Initialise User Inputs / Session States
 if 'data_norm' not in st.session_state:
     st.session_state['data_norm'] = data_structure()
@@ -58,22 +60,25 @@ with st.container(border = True):
     if 'error' in locals():
         st.error(error)
 
-# Plot 
+# Plot
+col1, col2 = st.columns(2)
 ## Raw Data
-with st.container(border=True):
-    st.header('Raw Data', anchor=False)
-    st.pyplot(df.fig_raw)
+with col1:
+    with st.container(border=True):
+        st.header('Raw Data', anchor=False)
+        st.pyplot(df.fig_raw)
 
 ## Normalised Data
-with st.container(border=True):
-    st.header('Normalised Data')
-    st.pyplot(df.fig_norm)
-    
-    st.select_slider('λ (for baseline correction)', (1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9), 
-                        key='lambda', 
-                        on_change=df.update, 
-                        disabled=(df.names == []))
-    st.button('Export', on_click=df.export, 
-              disabled=(df.names == []))
-    
+with col2:
+    with st.container(border=True):
+        st.header('Normalised Data')
+        st.pyplot(df.fig_norm)
+        
+        st.select_slider('λ (for baseline correction)', (1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9), 
+                            key='lambda', 
+                            on_change=df.update, 
+                            disabled=(df.names == []))
+        st.button('Export', on_click=df.export, 
+                disabled=(df.names == []))
+        
 
