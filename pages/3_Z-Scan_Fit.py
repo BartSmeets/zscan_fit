@@ -1,8 +1,9 @@
 import streamlit as st
 import numpy as np
 import os
-from utils.z_scan import data_structure
+from utils.z_scan import data_structure, transmittance
 import os
+import matplotlib.pyplot as plt
 
 st.set_page_config(layout='wide')
 
@@ -31,11 +32,11 @@ with col01:
         st.header('User Inputs', anchor=False)
         col1, col2, col3 = st.columns(3)
         with col1:
-            df.ui['alpha0'] = st.number_input('α$_0$ (cm$^{-1}$)')
+            df.ui['alpha0'] = st.number_input('α$_0$ (cm$^{-1}$)', value=df.ui['alpha0'])
         with col2:
-            df.ui['L'] = st.number_input('L (cm)')
+            df.ui['L'] = st.number_input('L (cm)', value=df.ui['L'])
         with col3:
-            df.ui['E'] = st.number_input('E$_{pulse}$ (μJ)')
+            df.ui['E'] = st.number_input('E$_{pulse}$ (μJ)', value=df.ui['E'])
         # Directory
         st.write('Data Directory')
         col1, col2 = st.columns([5,1])
@@ -83,7 +84,7 @@ with st.container(border=True):
                     with col11:
                         df.type[label] = st.checkbox(label, value=df.type[label], label_visibility='collapsed')
                     with col12:
-                        df.p0[label] = st.number_input(label, value=df.p0[label])
+                        df.p0[label] = st.number_input(label, value=df.p0[label], format='%.3e')
 
             # Bounds
             with st.container(border=True):
@@ -91,9 +92,9 @@ with st.container(border=True):
                 for label in options:
                     col11, col12 = st.columns(2)
                     with col11:
-                        df.bounds[label][0] = st.number_input(label, value=df.bounds[label][0], key=label+'_min')
+                        df.bounds[label][0] = st.number_input(label, value=df.bounds[label][0], key=label+'_min', format='%.3e')
                     with col12:
-                        df.bounds[label][1] = st.number_input(label + 'max', value=df.bounds[label][1], label_visibility='hidden')
+                        df.bounds[label][1] = st.number_input(label + 'max', value=df.bounds[label][1], label_visibility='hidden', format='%.3e')
 
     # Model
     with col2:
@@ -104,7 +105,37 @@ with st.container(border=True):
                 df.model_parameters[parameter] = st.number_input(parameter, value=df.model_parameters[parameter])
     
     with col3:
-        st.button('Run', on_click=df.run)
+        with st.container(border=True):
+            st.header('Run Model', anchor=False)
+            st.button('Run', on_click=df.run, use_container_width=True, disabled=not(True in list(df.type.values()) and hasattr(df, 'raw')))
+            df.bar = st.progress(0)
+            df.textbox = st.empty()
+            df.progress_update(0, 0, 0)
 
-    
-    
+        with st.container(border=True):
+            st.header('Results', anchor=False)
+            na_option = np.array(list(df.p0.values()))
+            try:
+                na_option[list(df.type.values())] = df.pBest[:]
+            except AttributeError:
+                string = 'Run model to obtain results'
+            else:
+                string = f"""
+                    z0 = {na_option[0]:.3f} mm\\
+                    Is1 = {na_option[1]:.3e} W/mm$^{2}$\\
+                    Is2 = {na_option[2]:.3e} W/mm$^{2}$\\
+                    β = {na_option[3]:.3e} mm/W
+                    """
+            finally:
+                st.write(string)
+
+        # Plot
+        fig = plt.figure()
+        try:
+            z_plot = np.linspace(df.z[0], df.z[-1], 1000)
+            plt.plot(df.z, df.I, '.')
+            plt.plot(z_plot, transmittance(df, na_option, z_plot))
+        except:pass
+
+        st.pyplot(fig)
+
