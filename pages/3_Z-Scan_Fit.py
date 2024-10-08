@@ -75,6 +75,8 @@ with st.container(border=True):
     # Initial Guess
     with col1:
             options = ['z0', 'Is1', 'Is2', 'beta']
+            units = {'z0': 'cm', 'Is1': 'GW/cm$^2$', 'Is2':'GW/cm$^2$', 'beta': 'cm/GW'}
+
             with st.container(border=True):
                 st.header('Initial Guess', anchor=False)
 
@@ -82,9 +84,9 @@ with st.container(border=True):
                 for label in options:
                     col11, col12 = st.columns([1, 19])
                     with col11:
-                        df.type[label] = st.checkbox(label, value=df.type[label], label_visibility='collapsed')
+                        df.type[label] = st.checkbox(f'{label} ({units[label]})', value=df.type[label], label_visibility='collapsed')
                     with col12:
-                        df.p0[label] = st.number_input(label, value=df.p0[label], format='%.3e')
+                        df.p0[label] = st.number_input(f'{label} ({units[label]})', value=df.p0[label], format='%.3e')
 
             # Bounds
             with st.container(border=True):
@@ -92,9 +94,9 @@ with st.container(border=True):
                 for label in options:
                     col11, col12 = st.columns(2)
                     with col11:
-                        df.bounds[label][0] = st.number_input(label, value=df.bounds[label][0], key=label+'_min', format='%.3e')
+                        df.bounds[label][0] = st.number_input(f'{label} ({units[label]})', value=df.bounds[label][0], key=label+'_min', format='%.3e')
                     with col12:
-                        df.bounds[label][1] = st.number_input(label + 'max', value=df.bounds[label][1], label_visibility='hidden', format='%.3e')
+                        df.bounds[label][1] = st.number_input(f'{label} ({units[label]})' + 'max', value=df.bounds[label][1], label_visibility='hidden', format='%.3e')
 
     # Model
     with col2:
@@ -121,10 +123,10 @@ with st.container(border=True):
                 string = 'Run model to obtain results'
             else:
                 string = f"""
-                    z0 = {na_option[0]:.3f} mm\\
-                    Is1 = {na_option[1]:.3e} W/mm$^{2}$\\
-                    Is2 = {na_option[2]:.3e} W/mm$^{2}$\\
-                    β = {na_option[3]:.3e} mm/W
+                    z0 = {na_option[0]:.3f} cm\\
+                    Is1 = {na_option[1]:.3e} GW/cm$^{2}$\\
+                    Is2 = {na_option[2]:.3e} GW/cm$^{2}$\\
+                    β = {na_option[3]:.3e} cm/GW
                     """
             finally:
                 st.write(string)
@@ -139,4 +141,4 @@ with st.container(border=True):
 
         st.pyplot(fig)
 
-st.warning('UNITS ARE NOT CORRECT')
+st.warning('UNITS ARE NOT CORRECT, should be GW/cm2')

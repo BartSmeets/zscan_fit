@@ -54,12 +54,16 @@ class data_structure:
             self.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=self.folder, filetypes=[("TOML files", "*.toml")], parent=root)
         except FileNotFoundError:
             self.beam_directory = os.environ.get('HOMEPATH')
-        root.destroy()
+        else:
+            with open(self.beam_directory, 'r') as file:
+                config = toml.load(file)
+            self.w0 = config['Beam Profile Fitting']['w0'][0]
+            self.zR = config['Beam Profile Fitting']['zR'][0]
+        finally:
+            root.destroy()
         
-        with open(self.beam_directory, 'r') as file:
-            config = toml.load(file)
-        self.w0 = config['Beam Profile Fitting']['w0'][0]
-        self.zR = config['Beam Profile Fitting']['zR'][0]
+        
+        
 
     def run(self):
         # Calculate I0 from values
