@@ -8,6 +8,7 @@ import glob
 from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 class data_structure:
     def __init__(self):
@@ -67,25 +68,6 @@ class data_structure:
         except:
             pass 
         root.destroy()
-
-
-    def transmittance(self, x, z=None):
-        if z is None:
-            I_in  = self.I0 / (1 + ((self.z - x[0])/(self.zR*1e-4))**2)  # Initial condition
-        else:
-            I_in  = self.I0 / (1 + ((z - x[0])/(self.zR*1e-4))**2)  # Initial condition
-        print('start solve')
-        model = lambda z, I: self.dI_dz(z, I, *x)
-        sol = solve_ivp(model, [0, self.ui['L']], I_in, t_eval=[self.ui['L']])    # Runge-Kutta 45 method
-        print('finished solve')
-        try:
-            I_out = sol.y[:, 0]
-        except TypeError:
-            transmittance = 1e9
-        else:
-            transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
-        print(transmittance)
-        return transmittance
         
 
     def run(self):
@@ -217,6 +199,24 @@ class data_structure:
             
         return pBest, chi2Best
 
+    def transmittance(self, x, z=None):
+        if z is None:
+            I_in  = self.I0 / (1 + ((self.z - x[0])/(self.zR*1e-4))**2)  # Initial condition
+        else:
+            I_in  = self.I0 / (1 + ((z - x[0])/(self.zR*1e-4))**2)  # Initial condition
+        print('start solve')
+        model = lambda z, I: self.dI_dz(z, I, *x)
+        sol = solve_ivp(model, [0, self.ui['L']], I_in, t_eval=[self.ui['L']])    # Runge-Kutta 45 method
+        print('finished solve')
+        try:
+            I_out = sol.y[:, 0]
+        except TypeError:
+            transmittance = 1e9
+        else:
+            transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
+        print(transmittance)
+        return transmittance
+    
     def dI_dz(self, z, I, x0, x1, x2, x3):
                 term1 = - self.ui['alpha0'] / (1 + (I/x1)) * I
                 term2 = - x3 / (1 + (I/x2)) * I**2
@@ -273,5 +273,106 @@ class data_structure:
             ax[i].plot(self.z, self.I, '.')
             ax[i].plot(z_plot, self.transmittance(na_option, z_plot))
             ax[i].text(5,1.1, string)
-        plt.show()
         return fig
+    
+    def export(self):
+        # Create export directory
+        timeCode = datetime.now()
+        export_folder = "/RESULTS_" + timeCode.strftime("%Y%m%d-%H%M%S")
+        export_directory = st.session_state['data_directory'] + export_folder
+        try:
+            os.mkdir(export_directory)
+        except:
+            pass    
+        
+        # Save images
+        temp = self.plot_type
+        self.plot_type = 'default'
+        figz = self.plot(self.na_option)
+        figz.savefig(export_directory + '/RESULT_Z.png', bbox_inches='tight')
+        self.plot_type = 'intensity'
+        figi = self.plot(self.na_option)
+        figi.savefig(export_directory + 'RESULT_I.png', bbox_inches='tight')
+        self.plot_type = temp
+
+        # Beam Profile
+        fitting_results = {
+            'Beam Profile Fitting': {
+                'w0': self.w0,
+                'z0': np.array(self.z0)*1e-2,
+                'zR': self.zR,
+                'M2': self.M2
+            }
+        }
+
+        toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
+        toml_lines = toml_string.split('\n')
+        comments = [toml_lines[0],
+                    '# Observable   [Value, Std]    Unit',
+                    f'{toml_lines[1]}   # um',
+                    f'{toml_lines[2]}   # cm',
+                    f'{toml_lines[3]}   # um',
+                    toml_lines[4]]
+        
+        # Z-Scan
+
+
+
+        with open(export_directory + '/RESULTS_BEAM_PROFILE.toml', 'w') as f:
+            f.write('\n'.join(comments))
+
+    def errorbar(self):
+        # Initialise datastructure
+        N_POINTS = len(self.z)
+        N_PARAM = np.sum(list(self.type.values()))
+        STEP = 0.005
+
+        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
+        st.warning(str(CHI2_COMPARISON) + ', ' + str(self.chi2Best))
+        self.errorbars = np.zeros(4)
+        self.chi2span = np.zeros(4)
+        na_option = np.array(self.na_option)
+
+
+        for i in range(4):
+            if not list(self.type.values())[i]:
+                continue
+
+            lBound = [na_option[i], 0]
+            rBound = [na_option[i], 0]
+            lTest = np.array(self.pBest)
+            rTest = np.array(self.pBest)
+
+            # Error calculation
+            newChi2 = 0
+            iteration = 0
+            while newChi2 < CHI2_COMPARISON and iteration != 100:
+                iteration += 1
+                rBound[0] = (1+STEP)*rBound[0]
+                lBound[0] = (1-STEP)*lBound[0]
+                rTest = rBound[0]
+                lTest = lBound[0]
+
+                ## Calculate chi2
+                def chi2(test):
+                    na_option = np.array(self.na_option)
+                    na_option[i] = test
+                    I_calc = self.transmittance(na_option)
+
+                    try:
+                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI[:,2])**2)
+                    except:
+                        chi2 = np.sum((self.I - I_calc)**2)
+                    return chi2
+
+                rBound[1] = chi2(rTest)
+                lBound[1] = chi2(lTest)
+                newChi2 = max(lBound[1], rBound[1])
+            
+            if rBound[1] > lBound[1]:
+                self.errorbars[i] = rBound[0]
+                self.chi2span[i] = rBound[1]
+            else:
+                self.errorbars[i] = lBound[0]
+                self.chi2span[i] = lBound[1]
+            
