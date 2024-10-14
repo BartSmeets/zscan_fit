@@ -121,8 +121,7 @@ with st.container(border=True):
                 na_option[list(df.type.values())] = df.pBest[:]
                 df.na_option = na_option
                 df.errorbar()
-            except Exception as e:
-                st.warning(e)
+            except AttributeError:
                 string = 'Run model to obtain results'
             else:
                 string = f"""
@@ -135,6 +134,7 @@ with st.container(border=True):
                     """
             finally:
                 st.write(string)
+                st.warning('The errorbars need checking')
 
         # Plot
         with st.container(border=True):

@@ -221,6 +221,62 @@ class data_structure:
                 term1 = - self.ui['alpha0'] / (1 + (I/x1)) * I
                 term2 = - x3 / (1 + (I/x2)) * I**2
                 return term1 + term2
+    
+
+    def errorbar(self):
+        # Initialise datastructure
+        N_POINTS = len(self.z)
+        N_PARAM = np.sum(list(self.type.values()))
+        STEP = 0.005
+
+        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
+        st.warning(str(CHI2_COMPARISON) + ', ' + str(self.chi2Best))
+        self.errorbars = np.zeros(4)
+        self.chi2span = np.zeros(4)
+        na_option = np.array(self.na_option)
+
+
+        for i in range(4):
+            if not list(self.type.values())[i]:
+                continue
+
+            lBound = [na_option[i], 0]
+            rBound = [na_option[i], 0]
+            lTest = np.array(self.pBest)
+            rTest = np.array(self.pBest)
+
+            # Error calculation
+            newChi2 = 0
+            iteration = 0
+            while newChi2 < CHI2_COMPARISON and iteration != 100:
+                iteration += 1
+                rBound[0] = (1+STEP)*rBound[0]
+                lBound[0] = (1-STEP)*lBound[0]
+                rTest = rBound[0]
+                lTest = lBound[0]
+
+                ## Calculate chi2
+                def chi2(test):
+                    na_option = np.array(self.na_option)
+                    na_option[i] = test
+                    I_calc = self.transmittance(na_option)
+
+                    try:
+                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI[:,2])**2)
+                    except:
+                        chi2 = np.sum((self.I - I_calc)**2)
+                    return chi2
+
+                rBound[1] = chi2(rTest)
+                lBound[1] = chi2(lTest)
+                newChi2 = max(lBound[1], rBound[1])
+            
+            if rBound[1] > lBound[1]:
+                self.errorbars[i] = rBound[0]
+                self.chi2span[i] = rBound[1]
+            else:
+                self.errorbars[i] = lBound[0]
+                self.chi2span[i] = lBound[1]
 
 
     def plot(self, na_option):
@@ -228,8 +284,8 @@ class data_structure:
 
         try:
             z_plot = np.linspace(self.z[0], self.z[-1], 1000)
-        except Exception as e:
-            st.warning(e)
+        except AttributeError:
+            pass
         else:
             if self.plot_type == 'default':
                 plt.plot(self.z, self.I, '.')
@@ -254,7 +310,10 @@ class data_structure:
         return figure
 
     def plot_all(self):
-        number = len(self.ps)
+        try:
+            number = len(self.ps)
+        except AttributeError:
+            return plt.figure()
 
         fig, ax = plt.subplots(number, 1, figsize=(10,3*number))
         z_plot = np.linspace(self.z[0], self.z[-1], 1000)
@@ -321,58 +380,5 @@ class data_structure:
         with open(export_directory + '/RESULTS_BEAM_PROFILE.toml', 'w') as f:
             f.write('\n'.join(comments))
 
-    def errorbar(self):
-        # Initialise datastructure
-        N_POINTS = len(self.z)
-        N_PARAM = np.sum(list(self.type.values()))
-        STEP = 0.005
-
-        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
-        st.warning(str(CHI2_COMPARISON) + ', ' + str(self.chi2Best))
-        self.errorbars = np.zeros(4)
-        self.chi2span = np.zeros(4)
-        na_option = np.array(self.na_option)
-
-
-        for i in range(4):
-            if not list(self.type.values())[i]:
-                continue
-
-            lBound = [na_option[i], 0]
-            rBound = [na_option[i], 0]
-            lTest = np.array(self.pBest)
-            rTest = np.array(self.pBest)
-
-            # Error calculation
-            newChi2 = 0
-            iteration = 0
-            while newChi2 < CHI2_COMPARISON and iteration != 100:
-                iteration += 1
-                rBound[0] = (1+STEP)*rBound[0]
-                lBound[0] = (1-STEP)*lBound[0]
-                rTest = rBound[0]
-                lTest = lBound[0]
-
-                ## Calculate chi2
-                def chi2(test):
-                    na_option = np.array(self.na_option)
-                    na_option[i] = test
-                    I_calc = self.transmittance(na_option)
-
-                    try:
-                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI[:,2])**2)
-                    except:
-                        chi2 = np.sum((self.I - I_calc)**2)
-                    return chi2
-
-                rBound[1] = chi2(rTest)
-                lBound[1] = chi2(lTest)
-                newChi2 = max(lBound[1], rBound[1])
-            
-            if rBound[1] > lBound[1]:
-                self.errorbars[i] = rBound[0]
-                self.chi2span[i] = rBound[1]
-            else:
-                self.errorbars[i] = lBound[0]
-                self.chi2span[i] = lBound[1]
+    
             
