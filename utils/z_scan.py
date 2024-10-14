@@ -230,7 +230,6 @@ class data_structure:
         STEP = 0.005
 
         CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
-        st.warning(str(CHI2_COMPARISON) + ', ' + str(self.chi2Best))
         self.errorbars = np.zeros(4)
         self.chi2span = np.zeros(4)
         na_option = np.array(self.na_option)
@@ -338,7 +337,9 @@ class data_structure:
         # Create export directory
         timeCode = datetime.now()
         export_folder = "/RESULTS_" + timeCode.strftime("%Y%m%d-%H%M%S")
-        export_directory = st.session_state['data_directory'] + export_folder
+        export_directory = os.path.dirname(st.session_state['data_directory']) + export_folder
+        print(export_directory)
+        os.mkdir(export_directory)
         try:
             os.mkdir(export_directory)
         except:
@@ -351,34 +352,51 @@ class data_structure:
         figz.savefig(export_directory + '/RESULT_Z.png', bbox_inches='tight')
         self.plot_type = 'intensity'
         figi = self.plot(self.na_option)
-        figi.savefig(export_directory + 'RESULT_I.png', bbox_inches='tight')
+        figi.savefig(export_directory + '/RESULT_I.png', bbox_inches='tight')
         self.plot_type = temp
 
         # Beam Profile
         fitting_results = {
             'Beam Profile Fitting': {
                 'w0': self.w0,
-                'z0': np.array(self.z0)*1e-2,
-                'zR': self.zR,
-                'M2': self.M2
+                'zR': self.zR
             }
         }
 
         toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
         toml_lines = toml_string.split('\n')
         comments = [toml_lines[0],
-                    '# Observable   [Value, Std]    Unit',
+                    '# Observable   Value    Unit',
                     f'{toml_lines[1]}   # um',
-                    f'{toml_lines[2]}   # cm',
-                    f'{toml_lines[3]}   # um',
-                    toml_lines[4]]
+                    f'{toml_lines[2]}   # um']
+        
+        with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
+            f.write('\n'.join(comments))
         
         # Z-Scan
+        fitting_results = {
+            'Z-Scan Fitting': {
+                'z0': [self.na_option[0], self.errorbars[0], self.chi2span[0]],
+                'Is1': [self.na_option[1], self.errorbars[1], self.chi2span[1]],
+                'Is2': [self.na_option[2], self.errorbars[2], self.chi2span[2]],
+                'beta': [self.na_option[3], self.errorbars[3], self.chi2span[3]]
+            }
+        }
 
-
-
-        with open(export_directory + '/RESULTS_BEAM_PROFILE.toml', 'w') as f:
+        toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
+        toml_lines = toml_string.split('\n')
+        comments = ['', '', toml_lines[0],
+                    '# Observable   [Value, Std, Std Span]    Unit',
+                    f'{toml_lines[1]}   # cm',
+                    f'{toml_lines[2]}   # GW/cm2',
+                    f'{toml_lines[3]}   # GW/cm2',
+                    f'{toml_lines[4]}   # cm/GW']
+        
+        with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write('\n'.join(comments))
+
+
+        
 
     
             

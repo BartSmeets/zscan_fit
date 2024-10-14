@@ -146,4 +146,4 @@ with st.container(border=True):
                 with st.popover('All Results'):
                     st.pyplot(df.plot_all())
             with knop2:
-                st.button('Export', disabled=(not hasattr(df, 'ps')))
+                st.button('Export', on_click=df.export, disabled=(not hasattr(df, 'ps')))
