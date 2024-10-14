@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import os
-from utils.z_scan import data_structure, transmittance
+from utils.z_scan import data_structure
 import os
 import matplotlib.pyplot as plt
 
@@ -123,22 +123,19 @@ with st.container(border=True):
                 string = 'Run model to obtain results'
             else:
                 string = f"""
-                    z0 = {na_option[0]:.3f} cm\\
-                    Is1 = {na_option[1]:.3e} GW/cm$^{2}$\\
-                    Is2 = {na_option[2]:.3e} GW/cm$^{2}$\\
-                    β = {na_option[3]:.3e} cm/GW
+                    z$_0$ = {na_option[0]:.3f} cm\\
+                    Is$_1$ = {na_option[1]:.3e} GW/cm$^{2}$\\
+                    Is$_2$ = {na_option[2]:.3e} GW/cm$^{2}$\\
+                    β = {na_option[3]:.3e} cm/GW\\
+                    \\
+                    α/β = {df.ui['alpha0']/na_option[3]:.3e} GW/cm$^{2}$
                     """
             finally:
                 st.write(string)
 
         # Plot
-        fig = plt.figure()
-        try:
-            z_plot = np.linspace(df.z[0], df.z[-1], 1000)
-            plt.plot(df.z, df.I, '.')
-            plt.plot(z_plot, transmittance(df, na_option, z_plot))
-        except:pass
+        with st.container(border=True):
+            df.plot_type = st.radio('Plot Type', ['default', 'intensity'])
+            fig = df.plot(na_option)
 
-        st.pyplot(fig)
-
-st.warning('UNITS ARE NOT CORRECT, should be GW/cm2')
+            st.pyplot(fig)
