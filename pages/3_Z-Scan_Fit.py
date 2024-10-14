@@ -136,6 +136,11 @@ with st.container(border=True):
         # Plot
         with st.container(border=True):
             df.plot_type = st.radio('Plot Type', ['default', 'intensity'])
-            fig = df.plot(na_option)
+            st.pyplot(df.plot(na_option))
 
-            st.pyplot(fig)
+            knop1, knop2 = st.columns(2)
+            with knop1:
+                with st.popover('All Results'):
+                    st.pyplot(df.plot_all())
+            with knop2:
+                st.button('Export', disabled=(not hasattr(df, 'ps')))

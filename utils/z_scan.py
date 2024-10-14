@@ -253,4 +253,25 @@ class data_structure:
 
         return figure
 
+    def plot_all(self):
+        number = len(self.ps)
 
+        fig, ax = plt.subplots(number, 1, figsize=(10,3*number))
+        z_plot = np.linspace(self.z[0], self.z[-1], 1000)
+
+        for i, popt in enumerate(self.ps):
+            na_option = np.array(list(self.p0.values()))
+            na_option[list(self.type.values())] = popt[:]
+
+            string = f"""
+                    z$_0$ = {na_option[0]:.3f} cm\\
+                    Is$_1$ = {na_option[1]:.3e} GW/cm$^{2}$\\
+                    Is$_2$ = {na_option[2]:.3e} GW/cm$^{2}$\\
+                    β = {na_option[3]:.3e} cm/GW
+                    """
+
+            ax[i].plot(self.z, self.I, '.')
+            ax[i].plot(z_plot, self.transmittance(na_option, z_plot))
+            ax[i].text(5,1.1, string)
+        plt.show()
+        return fig
