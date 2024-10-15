@@ -274,7 +274,7 @@ class data_structure:
             }
         }
 
-        toml_string = toml.dumps(fitting_results)
+        toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
         toml_lines = toml_string.split('\n')
         comments = [toml_lines[0],
                     '# Observable   [Value, Std]    Unit',
