@@ -13,7 +13,9 @@ st.markdown('''
             ''')
 st.header('How to Use?', anchor=False)
 st.markdown('''
-            1. 
+            1. Conduct the z-scan measurement and normalise the data
+            2. Enter the user inputs
+            3. Fit the desired parameters by checking their checkbox under 'initial guess'
             ''')
 
 if 'data_zf' not in st.session_state:

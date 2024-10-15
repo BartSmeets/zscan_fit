@@ -7,3 +7,4 @@ st.markdown('''This project has been part of my thesis for the degree of [Master
 st.header('Pages', anchor=False)
 st.page_link('pages/1_Normalise_Data.py', label='Normalise Data')
 st.page_link('pages/2_Beam_Profile.py', label='Beam Profile Fitting')
+st.page_link('pages/3_Z-Scan_Fit.py', label='Z-Scan Fit')

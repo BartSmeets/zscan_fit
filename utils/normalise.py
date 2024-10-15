@@ -129,6 +129,7 @@ class data_structure:
 
         # Compute Normalisation
         ## On average data
+        self.baseline = arPLS(self.OA[0]).reshape(1,-1)
         self.OA_norm = self.OA / arPLS(self.OA[0]).reshape(1,-1)
         self.CA_norm = self.CA / arPLS(self.CA[0]).reshape(1,-1)
         ## On individual data
@@ -152,6 +153,7 @@ class data_structure:
         for i, name in enumerate(self.names):
             if st.session_state['OA'] == 'CH1':
                 ax[0, 0].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)
+                ax[0, 0].plot(self.z, self.baseline[0], '.', label='baseline')
                 ax[0, 1].plot(self.df[i, :, 0], self.df[i, :, 2], '.', label=name)
             else:
                 ax[0, 1].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)

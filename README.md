@@ -10,20 +10,13 @@ This project has been part of my thesis for the degree of [Master of Science in 
 
 The code has been split into four functional parts:
 * [beam profile](#beam-profile)
-* [power measurement](#power-measurement)
 * [normalise data](#normalise-data)
 * [z-scan fit](#z-scan-fit)
+
 
 ## Beam profile
 
 The first step of doing a z-scan measurement is to know the properties of the beam. The program generates a ```.toml``` containting the beam properties.
-
-
-## Power measurement
-
-Our setup used a oscilloscope to reliably visualise the beam energy.
-
-The program reads the oscilloscope data and exports a ```.toml``` containing the signal voltage, the pulse energy and the peak power. A plot of the signal is exported as well.
 
 
 ## Normalise data
