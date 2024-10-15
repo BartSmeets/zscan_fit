@@ -1,8 +1,13 @@
 # Z-Scan Fit
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]()
+[![Streamlit](https://img.shields.io/badge/Powered_by-Streamlit-red?logo=streamlit)](https://streamlit.io/])
 
 All code necessary to analyse a z-scan measurement and fit the data according to different nonlinear absorption models.
+
+To run:
+```
+$ streamlit run main.py
+```
 
 ## General information
 
