@@ -354,24 +354,6 @@ class data_structure:
         figi = self.plot(self.na_option)
         figi.savefig(export_directory + '/RESULT_I.png', bbox_inches='tight')
         self.plot_type = temp
-
-        # Beam Profile
-        fitting_results = {
-            'Beam Profile Fitting': {
-                'w0': self.w0,
-                'zR': self.zR
-            }
-        }
-
-        toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
-        toml_lines = toml_string.split('\n')
-        comments = [toml_lines[0],
-                    '# Observable   Value    Unit',
-                    f'{toml_lines[1]}   # um',
-                    f'{toml_lines[2]}   # um']
-        
-        with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
-            f.write('\n'.join(comments))
         
         # Z-Scan
         fitting_results = {
@@ -395,6 +377,31 @@ class data_structure:
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write('\n'.join(comments))
 
+        # Beam Profile
+        fitting_results = {
+            'Beam Profile Fitting': {
+                'w0': self.w0,
+                'zR': self.zR
+            }
+        }
+
+        toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
+        toml_lines = toml_string.split('\n')
+        comments = [toml_lines[0],
+                    '# Observable   Value    Unit',
+                    f'{toml_lines[1]}   # um',
+                    f'{toml_lines[2]}   # um']
+        
+        with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
+            f.write('\n'.join(comments))
+
+        # Everything
+        dictionary = dict()
+        for attr, value in self.__dict__.items():
+            dictionary[attr] = value
+        toml_string = toml.dumps({'everything' : dictionary}, encoder=toml.TomlNumpyEncoder())
+        with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
+            f.write('\n'.join(toml_string))
 
         
 
