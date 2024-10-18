@@ -367,7 +367,7 @@ class data_structure:
 
         toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
         toml_lines = toml_string.split('\n')
-        comments = ['', '', toml_lines[0],
+        comments = [toml_lines[0],
                     '# Observable   [Value, Std, Std Span]    Unit',
                     f'{toml_lines[1]}   # cm',
                     f'{toml_lines[2]}   # GW/cm2',
@@ -387,10 +387,10 @@ class data_structure:
 
         toml_string = toml.dumps(fitting_results, encoder=toml.TomlNumpyEncoder())
         toml_lines = toml_string.split('\n')
-        comments = [toml_lines[0],
+        comments = ['', '', toml_lines[0],
                     '# Observable   Value    Unit',
                     f'{toml_lines[1]}   # um',
-                    f'{toml_lines[2]}   # um']
+                    f'{toml_lines[2]}   # um', '', '']
         
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write('\n'.join(comments))
@@ -398,10 +398,15 @@ class data_structure:
         # Everything
         dictionary = dict()
         for attr, value in self.__dict__.items():
-            dictionary[attr] = value
-        toml_string = toml.dumps({'everything' : dictionary}, encoder=toml.TomlNumpyEncoder())
+            if not isinstance(value, st.delta_generator.DeltaGenerator):
+                dictionary[str(attr)] = value
+
+        # Convert the dictionary to a TOML string
+        toml_string = toml.dumps({'Everything': dictionary}, encoder=toml.TomlNumpyEncoder())
+
+        # Write the TOML string to the file
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
-            f.write('\n'.join(toml_string))
+            f.write(toml_string)
 
         
 
