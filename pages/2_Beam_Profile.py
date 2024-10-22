@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import os
-from utils.beam_profile import data_structure
+from utils.beam_profile import data_structure, select
 
 st.set_page_config(layout='wide')
 
@@ -31,6 +31,7 @@ st.markdown('''
             4. Fit the beam profile
             ''')
 
+# User Inputs
 with st.container(border = True):
     st.header('User Inputs', anchor=False)
 
@@ -40,7 +41,7 @@ with st.container(border = True):
     with col1:
         st.session_state['profile_directory'] = st.text_input('Directory', value=st.session_state['profile_directory'], label_visibility='collapsed')
     with col2:
-        st.button('Browse', on_click=df.select)
+        st.button('Browse', on_click=lambda: select(df))
     
     # Values
     col1, col2 = st.columns(2)

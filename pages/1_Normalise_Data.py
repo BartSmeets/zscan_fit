@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.normalise import data_structure
+from utils.normalise import data_structure, select
 
 st.set_page_config(layout='wide')
 
@@ -34,7 +34,7 @@ with st.container(border = True):
     ## Select files
     col1, col2 = st.columns([1,5])
     with col1:
-        if st.button('Select Files', on_click=df.select):
+        if st.button('Select Files', on_click=lambda: select(df)):
             try:
                 df.load()
             except ValueError:

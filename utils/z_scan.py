@@ -4,7 +4,6 @@ import os
 import toml
 import numpy as np
 import streamlit as st
-import glob
 from scipy.integrate import solve_ivp
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
@@ -26,48 +25,6 @@ class data_structure:
         PULSE_WIDTH = 6e-9  # s
         P_laser = self.ui['E']*1e-6 / PULSE_WIDTH   # J/s
         self.I0 = 2*P_laser / (np.pi * (self.w0*1e-4)**2)*1e-9   # GW/cm2
-    
-    def select(self):
-        '''
-        Opens a window to select the files you want to load
-
-        ## Generates:
-        - self.directory: list with the directories of the selected files
-        - self.folder: folder where the files are located
-        - self.names: list of the file names
-        '''
-
-        # Open Window
-        root = tk.Tk()
-        root.attributes('-topmost', True)
-        root.withdraw()
-        try:
-            st.session_state['data_directory'] = filedialog.askopenfilename(title='Select Data', initialdir=st.session_state['data_directory'], parent=root)
-        except FileNotFoundError:
-            st.session_state['data_directory'] = os.environ.get('HOMEPATH')
-        root.destroy()
-
-        self.raw = np.loadtxt(st.session_state['data_directory'])
-        self.z = self.raw[:, 0] * 1e-1  # cm
-        self.I = self.raw[:, 1]
-        self.dI = self.raw[:, 2]
-
-    
-    def load_beam(self):
-        # Open Window
-        root = tk.Tk()
-        root.attributes('-topmost', True)
-        root.withdraw()
-        self.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=self.folder, filetypes=[("TOML files", "*.toml")], parent=root)
-        self.beam_directory = os.environ.get('HOMEPATH')
-        try:
-            with open(self.beam_directory, 'r') as file:
-                config = toml.load(file)
-                self.w0 = config['Beam Profile Fitting']['w0'][0]
-                self.zR = config['Beam Profile Fitting']['zR'][0]
-        except:
-            pass 
-        root.destroy()
         
 
     def run(self):
@@ -407,6 +364,48 @@ class data_structure:
         # Write the TOML string to the file
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write(toml_string)
+
+def select(data_structure):
+    '''
+    Opens a window to select the files you want to load
+
+    ## Generates:
+    - self.directory: list with the directories of the selected files
+    - self.folder: folder where the files are located
+    - self.names: list of the file names
+    '''
+
+    # Open Window
+    root = tk.Tk()
+    root.attributes('-topmost', True)
+    root.withdraw()
+    try:
+        st.session_state['data_directory'] = filedialog.askopenfilename(title='Select Data', initialdir=st.session_state['data_directory'], parent=root)
+    except FileNotFoundError:
+        st.session_state['data_directory'] = os.environ.get('HOMEPATH')
+    root.destroy()
+
+    data_structure.raw = np.loadtxt(st.session_state['data_directory'])
+    data_structure.z = data_structure.raw[:, 0] * 1e-1  # cm
+    data_structure.I = data_structure.raw[:, 1]
+    data_structure.dI = data_structure.raw[:, 2]
+
+
+def load_beam(data_structure):
+        # Open Window
+        root = tk.Tk()
+        root.attributes('-topmost', True)
+        root.withdraw()
+        data_structure.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=data_structure.folder, filetypes=[("TOML files", "*.toml")], parent=root)
+        data_structure.beam_directory = os.environ.get('HOMEPATH')
+        try:
+            with open(data_structure.beam_directory, 'r') as file:
+                config = toml.load(file)
+                data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
+                data_structure.zR = config['Beam Profile Fitting']['zR'][0]
+        except:
+            pass 
+        root.destroy()
 
         
 
