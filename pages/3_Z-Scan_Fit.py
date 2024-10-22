@@ -1,9 +1,10 @@
 import streamlit as st
 import numpy as np
 import os
-from utils.z_scan import data_structure
+from utils.z_scan import data_structure, select, load_beam
 import os
-import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog
 
 st.set_page_config(layout='wide')
 
@@ -45,7 +46,7 @@ with col01:
         with col1:
             st.session_state['data_directory'] = st.text_input('Directory', value=st.session_state['data_directory'], label_visibility='collapsed')
         with col2:
-            st.button('Browse Data', on_click=df.select)
+            st.button('Browse Data', on_click=lambda: select(df))
 
 
 # Load Beam profile
@@ -57,10 +58,7 @@ with col02:
     except (KeyError, AttributeError):  
         pass   
 
-    with st.container(border=True, height=None):
-        def load_beamProfile():
-            df.load_beam()
-            
+    with st.container(border=True, height=None):           
         st.header('Beam Profile', anchor=False)
         col1, col2, col3= st.columns(3)
         with col1:
@@ -68,7 +66,7 @@ with col02:
         with col2:
             df.zR = st.number_input('z$_R$ (μm)', value=df.zR)
         with col3:
-            st.button('Browse', on_click=load_beamProfile)
+            st.button('Browse', on_click=lambda: load_beam(df))
 
 # Fit
 with st.container(border=True):
