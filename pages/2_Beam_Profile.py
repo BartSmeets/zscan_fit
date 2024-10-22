@@ -1,10 +1,7 @@
 import streamlit as st
 import numpy as np
 import os
-from utils.beam_profile import data_structure
-import tkinter as tk
-from tkinter import filedialog
-import glob
+from utils.beam_profile import data_structure, select
 
 st.set_page_config(layout='wide')
 
@@ -35,25 +32,6 @@ st.markdown('''
             ''')
 
 # User Inputs
-def select(data_structure):
-        '''
-        Opens a window to select the files you want to load
-
-        ## Generates:
-        - self.directory: list with the directories of the selected files
-        - self.folder: folder where the files are located
-        - self.names: list of the file names
-        '''
-
-        # Open Window
-        root = tk.Tk()
-        root.attributes('-topmost', True)
-        root.withdraw()
-        st.session_state['profile_directory'] = filedialog.askdirectory(title='Select Directory', initialdir=st.session_state['profile_directory'], parent=root)
-        root.destroy()
-
-        data_structure.all_files = glob.glob(st.session_state['profile_directory'] + '/Data_*.txt') # Load all files having a specific name format within the working directory)
-
 with st.container(border = True):
     st.header('User Inputs', anchor=False)
 

@@ -6,6 +6,8 @@ from scipy import sparse
 from scipy.sparse.linalg import spsolve
 from datetime import datetime
 import streamlit as st
+import tkinter as tk
+from tkinter import filedialog
 
 class data_structure:
     def __init__(self):
@@ -262,3 +264,24 @@ class data_structure:
         
         # Open output folder
         os.startfile(export_directory)
+
+def select(data_structure):
+        '''
+        Opens a window to select the files you want to load
+
+        ## Generates:
+        - self.directory: list with the directories of the selected files
+        - self.folder: folder where the files are located
+        - self.names: list of the file names
+        '''
+        # Open Window
+        root = tk.Tk()
+        root.attributes('-topmost', True)
+        root.withdraw()
+        data_structure.directory = filedialog.askopenfilenames(title='Select Data Files', initialdir=data_structure.folder, parent=root)
+        root.destroy()
+        
+        # Seperate folder from name
+        index = data_structure.directory[0].rfind('/')
+        data_structure.folder = data_structure.directory[0][:index]
+        data_structure.names = [dir[index+1:] for dir in data_structure.directory]

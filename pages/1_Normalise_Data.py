@@ -1,7 +1,5 @@
 import streamlit as st
-from utils.normalise import data_structure
-import tkinter as tk
-from tkinter import filedialog
+from utils.normalise import data_structure, select
 
 st.set_page_config(layout='wide')
 
@@ -29,29 +27,6 @@ st.markdown('''
             ''')
 
 # User Inputs
-
-def select(data_structure):
-        '''
-        Opens a window to select the files you want to load
-
-        ## Generates:
-        - self.directory: list with the directories of the selected files
-        - self.folder: folder where the files are located
-        - self.names: list of the file names
-        '''
-        # Open Window
-        root = tk.Tk()
-        root.attributes('-topmost', True)
-        root.withdraw()
-        data_structure.directory = filedialog.askopenfilenames(title='Select Data Files', initialdir=data_structure.folder, parent=root)
-        root.destroy()
-        
-        # Seperate folder from name
-        index = data_structure.directory[0].rfind('/')
-        data_structure.folder = data_structure.directory[0][:index]
-        data_structure.names = [dir[index+1:] for dir in data_structure.directory]
-
-
 with st.container(border = True):
     st.header('User Inputs', anchor=False)
 
@@ -59,8 +34,7 @@ with st.container(border = True):
     ## Select files
     col1, col2 = st.columns([1,5])
     with col1:
-        if st.button('Select Files'):
-            select(df)
+        if st.button('Select Files', on_click=lambda: select(df)):
             try:
                 df.load()
             except ValueError:
