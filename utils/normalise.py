@@ -1,6 +1,4 @@
 import os
-import tkinter as tk
-from tkinter import filedialog
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
@@ -15,29 +13,6 @@ class data_structure:
         self.names = []
         self.fig_raw = plt.figure(figsize=(8,7))
         self.fig_norm = plt.figure(figsize=(8,7))
-
-
-    def select(self):
-        '''
-        Opens a window to select the files you want to load
-
-        ## Generates:
-        - self.directory: list with the directories of the selected files
-        - self.folder: folder where the files are located
-        - self.names: list of the file names
-        '''
-
-        # Open Window
-        root = tk.Tk()
-        root.attributes('-topmost', True)
-        root.withdraw()
-        self.directory = filedialog.askopenfilenames(title='Select Data Files', initialdir=self.folder, parent=root)
-        root.destroy()
-        
-        # Seperate folder from name
-        index = self.directory[0].rfind('/')
-        self.folder = self.directory[0][:index]
-        self.names = [dir[index+1:] for dir in self.directory]
 
 
     def load(self):
