@@ -182,7 +182,7 @@ class data_structure:
         MAX_ITER = 1e3
         STEP = 1/MAX_ITER
 
-        CHI2_COMPARISON = np.sqrt(2*(N_POINTS - N_PARAM)) + self.chi2Best
+        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
         self.errorbars = np.zeros(4)
         self.chi2span = np.zeros(4)
         na_option = np.array(self.na_option)
