@@ -77,9 +77,7 @@ class data_structure:
         mask = list(self.type.values())
         p0 = np.array(list(self.p0.values()))[mask]
         bounds = np.array(list(self.bounds.values()))[mask]
-        print('start minimize')
         popt = minimize(fitting_model, x0=p0, bounds=bounds)
-        print('finished minimizing')
         pBest = pMin = popt.x
         chi2Prev = chi2Best = fitting_model(pMin)
 
@@ -161,17 +159,14 @@ class data_structure:
             I_in  = self.I0 / (1 + ((self.z - x[0])/(self.zR*1e-4))**2)  # Initial condition
         else:
             I_in  = self.I0 / (1 + ((z - x[0])/(self.zR*1e-4))**2)  # Initial condition
-        print('start solve')
         model = lambda z, I: self.dI_dz(z, I, *x)
         sol = solve_ivp(model, [0, self.ui['L']], I_in, t_eval=[self.ui['L']])    # Runge-Kutta 45 method
-        print('finished solve')
         try:
             I_out = sol.y[:, 0]
         except TypeError:
             transmittance = 1e9
         else:
             transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
-        print(transmittance)
         return transmittance
     
     def dI_dz(self, z, I, x0, x1, x2, x3):
@@ -185,6 +180,7 @@ class data_structure:
         N_POINTS = len(self.z)
         N_PARAM = np.sum(list(self.type.values()))
         STEP = 0.005
+        MAX_ITER = 1e3
 
         CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
         self.errorbars = np.zeros(4)
@@ -204,7 +200,7 @@ class data_structure:
             # Error calculation
             newChi2 = 0
             iteration = 0
-            while newChi2 < CHI2_COMPARISON and iteration != 100:
+            while newChi2 < CHI2_COMPARISON and iteration < MAX_ITER:
                 iteration += 1
                 rBound[0] = (1+STEP)*rBound[0]
                 lBound[0] = (1-STEP)*lBound[0]
@@ -227,6 +223,10 @@ class data_structure:
                 lBound[1] = chi2(lTest)
                 newChi2 = max(lBound[1], rBound[1])
             
+            if iteration == MAX_ITER:
+                st.warning('Warning: Max number of iterations reached. Errorbar may not be reliable.')
+
+            # Save
             if rBound[1] > lBound[1]:
                 self.errorbars[i] = rBound[0]
                 self.chi2span[i] = rBound[1]
@@ -295,7 +295,6 @@ class data_structure:
         timeCode = datetime.now()
         export_folder = "/RESULTS_" + timeCode.strftime("%Y%m%d-%H%M%S")
         export_directory = os.path.dirname(st.session_state['data_directory']) + export_folder
-        print(export_directory)
         os.mkdir(export_directory)
         try:
             os.mkdir(export_directory)
