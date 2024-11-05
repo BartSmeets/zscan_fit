@@ -17,8 +17,8 @@ class data_structure:
         self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0}
         self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308]}
         self.model_parameters = {'Number Runs': 5, 'Max Perturbation': 2, 'Max Iterations': 500, 'Max Age': 50, 'T':0.8, 'Max Jump':5, 'Max Reject':5}
-        self.w0 = 10    # um
-        self.zR = 500   # um
+        self.w0 = 10.    # um
+        self.zR = 500.   # um
         self.plot_type = 'default'
 
         # Calculate I0 from values
@@ -179,10 +179,10 @@ class data_structure:
         # Initialise datastructure
         N_POINTS = len(self.z)
         N_PARAM = np.sum(list(self.type.values()))
-        STEP = 0.005
         MAX_ITER = 1e3
+        STEP = 1/MAX_ITER
 
-        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
+        CHI2_COMPARISON = np.sqrt(2*(N_POINTS - N_PARAM)) + self.chi2Best
         self.errorbars = np.zeros(4)
         self.chi2span = np.zeros(4)
         na_option = np.array(self.na_option)
@@ -194,6 +194,7 @@ class data_structure:
 
             lBound = [na_option[i], 0]
             rBound = [na_option[i], 0]
+            abs_step = [(STEP)*rBound[0], (STEP)*lBound[0]]
             lTest = np.array(self.pBest)
             rTest = np.array(self.pBest)
 
@@ -202,8 +203,8 @@ class data_structure:
             iteration = 0
             while newChi2 < CHI2_COMPARISON and iteration < MAX_ITER:
                 iteration += 1
-                rBound[0] = (1+STEP)*rBound[0]
-                lBound[0] = (1-STEP)*lBound[0]
+                rBound[0] += abs_step[0]
+                lBound[0] += abs_step[1]
                 rTest = rBound[0]
                 lTest = lBound[0]
 
@@ -214,7 +215,7 @@ class data_structure:
                     I_calc = self.transmittance(na_option)
 
                     try:
-                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI[:,2])**2)
+                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI)**2)
                     except:
                         chi2 = np.sum((self.I - I_calc)**2)
                     return chi2
@@ -222,16 +223,13 @@ class data_structure:
                 rBound[1] = chi2(rTest)
                 lBound[1] = chi2(lTest)
                 newChi2 = max(lBound[1], rBound[1])
-            
-            if iteration == MAX_ITER:
-                st.warning('Warning: Max number of iterations reached. Errorbar may not be reliable.')
 
             # Save
             if rBound[1] > lBound[1]:
-                self.errorbars[i] = rBound[0]
+                self.errorbars[i] = np.abs(rBound[0] - na_option[i])
                 self.chi2span[i] = rBound[1]
             else:
-                self.errorbars[i] = lBound[0]
+                self.errorbars[i] = np.abs(lBound[0] - na_option[i])
                 self.chi2span[i] = lBound[1]
 
 
