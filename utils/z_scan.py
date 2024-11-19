@@ -65,7 +65,8 @@ class data_structure:
             else:
                 chi2Vector = (self.I - I_calc)**2 / np.average(self.dI)**2
 
-            return np.sum(chi2Vector)
+            result = np.sum(chi2Vector)
+            return result
         
         def fitting_model(x):
             na_option = np.array(list(self.p0.values()))
@@ -180,9 +181,10 @@ class data_structure:
         N_POINTS = len(self.z)
         N_PARAM = np.sum(list(self.type.values()))
         MAX_ITER = 1e3
-        STEP = 1/MAX_ITER
+        STEP = 0.005
 
-        CHI2_COMPARISON = (N_POINTS - N_PARAM) + self.chi2Best
+        p = 0.1
+        CHI2_COMPARISON = (1+p) * self.chi2Best
         self.errorbars = np.zeros(4)
         self.chi2span = np.zeros(4)
         na_option = np.array(self.na_option)
@@ -194,7 +196,6 @@ class data_structure:
 
             lBound = [na_option[i], 0]
             rBound = [na_option[i], 0]
-            abs_step = [(STEP)*rBound[0], (STEP)*lBound[0]]
             lTest = np.array(self.pBest)
             rTest = np.array(self.pBest)
 
@@ -203,8 +204,8 @@ class data_structure:
             iteration = 0
             while newChi2 < CHI2_COMPARISON and iteration < MAX_ITER:
                 iteration += 1
-                rBound[0] += abs_step[0]
-                lBound[0] += abs_step[1]
+                rBound[0] *= (1+STEP)
+                lBound[0] *= (1-STEP)
                 rTest = rBound[0]
                 lTest = lBound[0]
 
@@ -214,10 +215,10 @@ class data_structure:
                     na_option[i] = test
                     I_calc = self.transmittance(na_option)
 
-                    try:
-                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI)**2)
-                    except:
+                    if 0 in self.dI:    # Poorly defined uncertainty
                         chi2 = np.sum((self.I - I_calc)**2)
+                    else:
+                        chi2 = np.sum((self.I - I_calc)**2 / np.average(self.dI)**2)
                     return chi2
 
                 rBound[1] = chi2(rTest)
@@ -394,14 +395,10 @@ def load_beam(data_structure):
         root.attributes('-topmost', True)
         root.withdraw()
         data_structure.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=data_structure.folder, filetypes=[("TOML files", "*.toml")], parent=root)
-        data_structure.beam_directory = os.environ.get('HOMEPATH')
-        try:
-            with open(data_structure.beam_directory, 'r') as file:
-                config = toml.load(file)
-                data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
-                data_structure.zR = config['Beam Profile Fitting']['zR'][0]
-        except:
-            pass 
+        with open(data_structure.beam_directory, 'r') as file:
+            config = toml.load(file)
+            data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
+            data_structure.zR = config['Beam Profile Fitting']['zR'][0]
         root.destroy()
 
         

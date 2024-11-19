@@ -26,7 +26,7 @@ class data_structure:
         - self.z: z-positions of the measurements (mm)
         -self.OA(CA): list containing the averaged Open Aperture (Closed Aperture) data and the MAE
         '''    
-
+    
         # Load all data
         for i, file in enumerate(self.directory):
             data = np.loadtxt(file)
@@ -34,25 +34,11 @@ class data_structure:
                 N = len(data[:, 0]) # Number of data points
                 self.df = np.ndarray((len(self.directory), N, 3))
             
-            self.df[i, :, 0] = np.abs(data[:, 0])    # z position
+            self.df[i, :, 0] = data[:, 0]-np.average(data[:, 0])    # z position
             self.df[i, :, 1] = data[:,1] # Channel 1
             self.df[i, :, 2] = data[:, 2]    # Channel 2
 
-        # Average
-        average = np.average(self.df, 0)
-        self.z = average[:, 0]
-
-        # Error
-        ## Mean absolute error is less sentisitive to outliers
-        MAE = np.mean(np.abs(self.df[:, :, 1:] - average[:, 1:]), axis=0).T
-
-        # Store
-        if st.session_state['OA'] == 'CH1':
-            self.OA = [average[:, 1], MAE[0]]
-            self.CA = [average[:, 2], MAE[1]]
-        else:
-            self.CA = [average[:, 1], MAE[0]]
-            self.OA = [average[:, 2],MAE[1]]
+        self.z = self.df[i, :, 0]
 
 
     def normalise(self):
@@ -105,16 +91,28 @@ class data_structure:
             return z
 
         # Compute Normalisation
-        ## On average data
-        self.baseline = arPLS(self.OA[0]).reshape(1,-1)
-        self.OA_norm = self.OA / arPLS(self.OA[0]).reshape(1,-1)
-        self.CA_norm = self.CA / arPLS(self.CA[0]).reshape(1,-1)
         ## On individual data
         self.df_norm = np.ndarray(self.df.shape)
+        self.baseline = np.empty(np.shape(self.df_norm[:, :, 0]))
         for i, _ in enumerate(self.df_norm[:, 0, 0]):
+            self.baseline[i,:] = arPLS(self.df[i, :, 1]).reshape(1,-1)
             self.df_norm[i, :, 0] = self.df[i, :, 0]
             self.df_norm[i, :, 1] = self.df[i, :, 1] / arPLS(self.df[i, :, 1]).reshape(1,-1)
             self.df_norm[i, :, 2] = self.df[i, :, 2] / arPLS(self.df[i, :, 2]).reshape(1,-1)
+        
+        # Average
+        average = np.average(self.df_norm, 0)
+        # Error
+        ## Mean absolute error is less sentisitive to outliers
+        MAE = np.mean(np.abs(self.df_norm[:, :, 1:] - average[:, 1:]), axis=0).T
+
+        # Store
+        if st.session_state['OA'] == 'CH1':
+            self.OA_norm = [average[:, 1], MAE[0]]
+            self.CA_norm = [average[:, 2], MAE[1]]
+        else:
+            self.CA_norm = [average[:, 1], MAE[0]]
+            self.OA_norm = [average[:, 2],MAE[1]]
 
 
     def plot_raw(self):
@@ -124,31 +122,28 @@ class data_structure:
         ## Generates:
         - self.fig_raw: figure object containing the plot
         '''
-        self.fig_raw, ax  = plt.subplots(2, 2, figsize=(8,7))
+        self.fig_raw, ax  = plt.subplots(1, 2, figsize=(8,7))
         
         # Plot individual measurements
         for i, name in enumerate(self.names):
             if st.session_state['OA'] == 'CH1':
-                ax[0, 0].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)
-                ax[0, 0].plot(self.z, self.baseline[0], '.', label='baseline')
-                ax[0, 1].plot(self.df[i, :, 0], self.df[i, :, 2], '.', label=name)
+                ax[0].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)
+                ax[0].plot(self.z, self.baseline[i], '.', label='baseline')
+                ax[1].plot(self.df[i, :, 0], self.df[i, :, 2], '.', label=name)
             else:
-                ax[0, 1].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)
-                ax[0, 0].plot(self.df[i, :, 0], self.df[i, :, 2], '.', label=name)
-        # Plot average of measurements
-        ax[1, 0].plot(self.z, self.OA[0], '.')
-        ax[1, 1].plot(self.z, self.CA[0], '.')
+                ax[1].plot(self.df[i, :, 0], self.df[i, :, 1], '.', label=name)
+                ax[0].plot(self.df[i, :, 0], self.df[i, :, 2], '.', label=name)
+    
 
         # Labels
-        ax[0,0].legend(bbox_to_anchor=(2.9,1))
-        ax[0,0].set_title('Open Aperture')
-        ax[1,0].set_title('Open Aperture (average)')
-        ax[1,0].set_xlabel('z [mm]')
-        ax[0,0].set_ylabel('Transmittance')
-        ax[1,0].set_ylabel('Transmittance')
-        ax[0,1].set_title('Closed Aperture')
-        ax[1,1].set_title('Closed Aperture (average)')
-        ax[1,1].set_xlabel('z [mm]')
+        ax[0].legend(bbox_to_anchor=(2.9,1))
+        ax[0].set_title('Open Aperture')
+        ax[0].set_xlabel('z [mm]')
+        ax[0].set_ylabel('Transmittance')
+        ax[0].set_ylabel('Transmittance')
+        ax[1].set_title('Closed Aperture')
+
+        ax[1].set_xlabel('z [mm]')
 
 
     def plot_norm(self):
