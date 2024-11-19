@@ -395,14 +395,10 @@ def load_beam(data_structure):
         root.attributes('-topmost', True)
         root.withdraw()
         data_structure.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=data_structure.folder, filetypes=[("TOML files", "*.toml")], parent=root)
-        data_structure.beam_directory = os.environ.get('HOMEPATH')
-        try:
-            with open(data_structure.beam_directory, 'r') as file:
-                config = toml.load(file)
-                data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
-                data_structure.zR = config['Beam Profile Fitting']['zR'][0]
-        except:
-            pass 
+        with open(data_structure.beam_directory, 'r') as file:
+            config = toml.load(file)
+            data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
+            data_structure.zR = config['Beam Profile Fitting']['zR'][0]
         root.destroy()
 
         
