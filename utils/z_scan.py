@@ -58,6 +58,7 @@ class data_structure:
     def bassinhopping(self, progress):
         def chi2(x):
             I_calc = self.transmittance(x)
+            print('In chi2: transmittance calculated')
 
             ## Calculate chi2
             if 0 in self.dI:    # Poorly defined uncertainty
@@ -78,8 +79,10 @@ class data_structure:
         mask = list(self.type.values())
         p0 = np.array(list(self.p0.values()))[mask]
         bounds = np.array(list(self.bounds.values()))[mask]
+        print('0, 0, minimize')
         popt = minimize(fitting_model, x0=p0, bounds=bounds)
         pBest = pMin = popt.x
+        print('0, 0, chi2')
         chi2Prev = chi2Best = fitting_model(pMin)
 
         ## Start minimalisation process
@@ -106,13 +109,16 @@ class data_structure:
                     pPerturbation[i] = p * perturbation
 
             #### Minimise Chi2
+            print(f'{niter}, {bestAge}, minimize')
             popt = minimize(fitting_model, x0=pPerturbation, bounds=bounds)
             p_newMin = popt.x
+            print(f'{niter}, {bestAge}, chi2')
             X2 = fitting_model(p_newMin)
 
             #### Metropolis criterion
             ##### Accept perturbation
             ###### Jumping -> accept perturbation regardless of conditions
+            print(f'{niter}, {bestAge}, check for jumping')
             if jump != 0:
                 chi2Prev = X2
                 pMin = p_newMin
@@ -162,6 +168,7 @@ class data_structure:
             I_in  = self.I0 / (1 + ((z - x[0])/(self.zR*1e-4))**2)  # Initial condition
         model = lambda z, I: self.dI_dz(z, I, *x)
         sol = solve_ivp(model, [0, self.ui['L']], I_in, t_eval=[self.ui['L']])    # Runge-Kutta 45 method
+        print('In transmittance: differential equation solved')
         try:
             I_out = sol.y[:, 0]
         except TypeError:
