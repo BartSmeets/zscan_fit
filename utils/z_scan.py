@@ -287,6 +287,7 @@ class data_structure:
 
             string = f"""
                     z$_0$ = {na_option[0]:.3f} cm\\
+                    α$_0$ = {na_option[4]:.3f} cm-1\\
                     Is$_1$ = {na_option[1]:.3e} GW/cm$^{2}$\\
                     Is$_2$ = {na_option[2]:.3e} GW/cm$^{2}$\\
                     β = {na_option[3]:.3e} cm/GW
@@ -322,6 +323,7 @@ class data_structure:
         fitting_results = {
             'Z-Scan Fitting': {
                 'z0': [self.na_option[0], self.errorbars[0], self.chi2span[0]],
+                'alpha0': [self.na_option[4], self.errorbars[4], self.chi2span[4]],
                 'Is1': [self.na_option[1], self.errorbars[1], self.chi2span[1]],
                 'Is2': [self.na_option[2], self.errorbars[2], self.chi2span[2]],
                 'beta': [self.na_option[3], self.errorbars[3], self.chi2span[3]]
@@ -333,9 +335,10 @@ class data_structure:
         comments = [toml_lines[0],
                     '# Observable   [Value, Std, Std Span]    Unit',
                     f'{toml_lines[1]}   # cm',
-                    f'{toml_lines[2]}   # GW/cm2',
+                    f'{toml_lines[2]}   # cm-1',
                     f'{toml_lines[3]}   # GW/cm2',
-                    f'{toml_lines[4]}   # cm/GW']
+                    f'{toml_lines[4]}   # GW/cm2',
+                    f'{toml_lines[5]}   # cm/GW']
         
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write('\n'.join(comments))

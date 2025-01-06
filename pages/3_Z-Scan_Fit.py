@@ -123,11 +123,11 @@ with st.container(border=True):
                 string = 'Run model to obtain results'
             else:
                 string = f"""
-                    z$_0$ = {na_option[0]:.3f} ± {df.errorbars[0]:.3f} cm | span: {df.chi2span[0]:.3f}\\
-                    α$_0$ = {na_option[4]:.3f} ± {df.errorbars[4]:.3f} cm$^-^1$ | span: {df.chi2span[4]:.3f}\\    
-                    Is$_1$ = {na_option[1]:.3e} ± {df.errorbars[1]:.3e} GW/cm$^{2}$ | span: {df.chi2span[1]:.1e}\\
-                    Is$_2$ = {na_option[2]:.3e} ± {df.errorbars[2]:.3e} GW/cm$^{2}$ | span: {df.chi2span[2]:.1e}\\
-                    β = {na_option[3]:.3e} ± {df.errorbars[3]:.3e} cm/GW | span: {df.chi2span[3]:.1e}\\
+                    z$_0$ = {na_option[0]:.3f} ± {df.errorbars[0]:.3f} cm | span: {df.chi2span[0]:.3f} \\
+                    α$_0$ = {na_option[4]:.3f} ± {df.errorbars[4]:.3f} cm-1 | span: {df.chi2span[4]:.3f} \\
+                    Is$_1$ = {na_option[1]:.3e} ± {df.errorbars[1]:.3e} GW/cm$^{2}$ | span: {df.chi2span[1]:.1e} \\
+                    Is$_2$ = {na_option[2]:.3e} ± {df.errorbars[2]:.3e} GW/cm$^{2}$ | span: {df.chi2span[2]:.1e} \\
+                    β = {na_option[3]:.3e} ± {df.errorbars[3]:.3e} cm/GW | span: {df.chi2span[3]:.1e} \\
                     \\
                     α/β = {na_option[4]/na_option[3]:.3e} GW/cm$^{2}$
                     """
