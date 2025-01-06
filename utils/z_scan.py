@@ -11,9 +11,9 @@ from datetime import datetime
 
 class data_structure:
     def __init__(self):
-        self.ui = {'L':.1, 'alpha0':44.67, 'E':3.55}
+        self.ui = {'L':.1, 'E':3.55}
         self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False, 'alpha':False}
-        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0, 'alpha':40}
+        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0, 'alpha':40.0}
         self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308], 'alpha':[0, 1.797e308]}
         self.model_parameters = {'Number Runs': 5, 'Max Perturbation': 2, 'Max Iterations': 500, 'Max Age': 50, 'T':0.8, 'Max Jump':5, 'Max Reject':5}
         self.w0 = 10.    # um
