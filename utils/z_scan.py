@@ -11,7 +11,6 @@ from datetime import datetime
 
 class data_structure:
     def __init__(self):
-        self.folder = os.environ.get('HOMEPATH')
         self.ui = {'L':.1, 'alpha0':44.67, 'E':3.55}
         self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False, 'alpha':False}
         self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0, 'alpha':40}
@@ -405,8 +404,8 @@ def load_beam(data_structure):
         root = tk.Tk()
         root.attributes('-topmost', True)
         root.withdraw()
-        data_structure.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=data_structure.folder, filetypes=[("TOML files", "*.toml")], parent=root)
-        with open(data_structure.beam_directory, 'r') as file:
+        beam_directory = filedialog.askopenfilename(title='Select Config File', filetypes=[("TOML files", "*.toml")], parent=root)
+        with open(beam_directory, 'r') as file:
             config = toml.load(file)
             data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
             data_structure.zR = config['Beam Profile Fitting']['zR'][0]
