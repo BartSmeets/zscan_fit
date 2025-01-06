@@ -34,9 +34,15 @@ class data_structure:
                 N = len(data[:, 0]) # Number of data points
                 self.df = np.ndarray((len(self.directory), N, 3))
             
-            self.df[i, :, 0] = data[:, 0]-np.average(data[:, 0])    # z position
-            self.df[i, :, 1] = data[:,1] # Channel 1
-            self.df[i, :, 2] = data[:, 2]    # Channel 2
+            self.df[i, :, 0] = data[:, 0] - np.average(data[:, 0])    # z position: - average to create identical axes in both measurement directions
+
+            if self.df[i, 0, 0] < 0:
+                self.df[i, :, 1] = data[:,1] # Channel 1
+                self.df[i, :, 2] = data[:, 2]    # Channel 2
+            else:
+                self.df[i, :, 0] = np.flip(self.df[i, :, 0])
+                self.df[i, :, 1] = np.flip(data[:,1]) # Channel 1
+                self.df[i, :, 2] = np.flip(data[:, 2])    # Channel 2
 
         self.z = self.df[i, :, 0]
 
@@ -258,7 +264,7 @@ class data_structure:
             np.savetxt(file_ca_string, file_ca_export)
         
         # Open output folder
-        os.startfile(export_directory)
+        st.success("Data Exported Succesfully")
 
 def select(data_structure):
         '''

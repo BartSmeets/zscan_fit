@@ -12,6 +12,8 @@ if 'CA' not in st.session_state:
     st.session_state['CA'] = 'CH2'
 if 'lambda' not in st.session_state:
     st.session_state['lambda'] = 1e6
+if 'z0' not in st.session_state:
+    st.session_state['z0'] = {}
 df = st.session_state['data_norm']
 
 # Title
@@ -37,7 +39,8 @@ with st.container(border = True):
         if st.button('Select Files', on_click=lambda: select(df)):
             try:
                 df.load()
-            except ValueError:
+            except ValueError as e:
+                st.error(e)
                 df.names = []    # Reset the loaded names
                 error = 'Data sets do not have the same number of data points.\
                          This is currently not supported.'
@@ -55,6 +58,10 @@ with st.container(border = True):
         st.selectbox('Open Aperture', ['CH1', 'CH2'], key='OA')
     with col2:
         st.selectbox('Closed Aperture', ['CH1', 'CH2'], key='CA')
+
+    # Select focal point position
+    for name in df.names:
+        st.session_state['z0'][name] = st.number_input(f'z$_0$ of {name}', value=0.0)
 
     # Print error if any
     if 'error' in locals():
