@@ -11,11 +11,10 @@ from datetime import datetime
 
 class data_structure:
     def __init__(self):
-        self.folder = os.environ.get('HOMEPATH')
-        self.ui = {'L':.1, 'alpha0':44.67, 'E':3.55}
-        self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False}
-        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0}
-        self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308]}
+        self.ui = {'L':.1, 'E':3.55}
+        self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False, 'alpha':False}
+        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0, 'alpha':40.0}
+        self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308], 'alpha':[0, 1.797e308]}
         self.model_parameters = {'Number Runs': 5, 'Max Perturbation': 2, 'Max Iterations': 500, 'Max Age': 50, 'T':0.8, 'Max Jump':5, 'Max Reject':5}
         self.w0 = 10.    # um
         self.zR = 500.   # um
@@ -58,6 +57,7 @@ class data_structure:
     def bassinhopping(self, progress):
         def chi2(x):
             I_calc = self.transmittance(x)
+            print('In chi2: transmittance calculated')
 
             ## Calculate chi2
             if 0 in self.dI:    # Poorly defined uncertainty
@@ -78,8 +78,10 @@ class data_structure:
         mask = list(self.type.values())
         p0 = np.array(list(self.p0.values()))[mask]
         bounds = np.array(list(self.bounds.values()))[mask]
+        print('0, 0, minimize')
         popt = minimize(fitting_model, x0=p0, bounds=bounds)
         pBest = pMin = popt.x
+        print('0, 0, chi2')
         chi2Prev = chi2Best = fitting_model(pMin)
 
         ## Start minimalisation process
@@ -106,13 +108,16 @@ class data_structure:
                     pPerturbation[i] = p * perturbation
 
             #### Minimise Chi2
-            popt = minimize(fitting_model, x0=pPerturbation, bounds=bounds)
+            print(f'{niter}, {bestAge}, minimize')
+            popt = minimize(fitting_model, x0=pPerturbation, bounds=bounds, method='Nelder-Mead')
             p_newMin = popt.x
+            print(f'{niter}, {bestAge}, chi2')
             X2 = fitting_model(p_newMin)
 
             #### Metropolis criterion
             ##### Accept perturbation
             ###### Jumping -> accept perturbation regardless of conditions
+            print(f'{niter}, {bestAge}, check for jumping')
             if jump != 0:
                 chi2Prev = X2
                 pMin = p_newMin
@@ -162,6 +167,7 @@ class data_structure:
             I_in  = self.I0 / (1 + ((z - x[0])/(self.zR*1e-4))**2)  # Initial condition
         model = lambda z, I: self.dI_dz(z, I, *x)
         sol = solve_ivp(model, [0, self.ui['L']], I_in, t_eval=[self.ui['L']])    # Runge-Kutta 45 method
+        print('In transmittance: differential equation solved')
         try:
             I_out = sol.y[:, 0]
         except TypeError:
@@ -170,32 +176,31 @@ class data_structure:
             transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
         return transmittance
     
-    def dI_dz(self, z, I, x0, x1, x2, x3):
-                term1 = - self.ui['alpha0'] / (1 + (I/x1)) * I
+    def dI_dz(self, z, I, x0, x1, x2, x3, x4):
+                term1 = - x4 / (1 + (I/x1)) * I
                 term2 = - x3 / (1 + (I/x2)) * I**2
                 return term1 + term2
     
 
     def errorbar(self):
         # Initialise datastructure
-        N_POINTS = len(self.z)
-        N_PARAM = np.sum(list(self.type.values()))
-        MAX_ITER = 1e3
-        STEP = 0.005
+        N_TOT = 5   # Total amount of parameters (if all in use)
+        MAX_ITER = 1e3  # Total number of allowed iterations
+        STEP = 0.005    # Perturbation step size
 
-        p = 0.1
+        p = 0.1 # Threshold: 10% deviation from optimal chi2
         CHI2_COMPARISON = (1+p) * self.chi2Best
-        self.errorbars = np.zeros(4)
-        self.chi2span = np.zeros(4)
+        self.errorbars = np.zeros(N_TOT)
+        self.chi2span = np.zeros(N_TOT)
         na_option = np.array(self.na_option)
 
 
-        for i in range(4):
+        for i in range(N_TOT):
             if not list(self.type.values())[i]:
                 continue
 
-            lBound = [na_option[i], 0]
-            rBound = [na_option[i], 0]
+            lBound = [na_option[i], 0]  # Index 0: Parameter adjusted up; Index 1: Corresponding chi2
+            rBound = [na_option[i], 0]  # Index 0: Parameter adjusted down; Index 1: Corresponding chi2
             lTest = np.array(self.pBest)
             rTest = np.array(self.pBest)
 
@@ -204,6 +209,8 @@ class data_structure:
             iteration = 0
             while newChi2 < CHI2_COMPARISON and iteration < MAX_ITER:
                 iteration += 1
+                
+                ## Perturb parameter for testing
                 rBound[0] *= (1+STEP)
                 lBound[0] *= (1-STEP)
                 rTest = rBound[0]
@@ -279,6 +286,7 @@ class data_structure:
 
             string = f"""
                     z$_0$ = {na_option[0]:.3f} cm\\
+                    α$_0$ = {na_option[4]:.3f} cm-1\\
                     Is$_1$ = {na_option[1]:.3e} GW/cm$^{2}$\\
                     Is$_2$ = {na_option[2]:.3e} GW/cm$^{2}$\\
                     β = {na_option[3]:.3e} cm/GW
@@ -314,6 +322,7 @@ class data_structure:
         fitting_results = {
             'Z-Scan Fitting': {
                 'z0': [self.na_option[0], self.errorbars[0], self.chi2span[0]],
+                'alpha0': [self.na_option[4], self.errorbars[4], self.chi2span[4]],
                 'Is1': [self.na_option[1], self.errorbars[1], self.chi2span[1]],
                 'Is2': [self.na_option[2], self.errorbars[2], self.chi2span[2]],
                 'beta': [self.na_option[3], self.errorbars[3], self.chi2span[3]]
@@ -325,9 +334,10 @@ class data_structure:
         comments = [toml_lines[0],
                     '# Observable   [Value, Std, Std Span]    Unit',
                     f'{toml_lines[1]}   # cm',
-                    f'{toml_lines[2]}   # GW/cm2',
+                    f'{toml_lines[2]}   # cm-1',
                     f'{toml_lines[3]}   # GW/cm2',
-                    f'{toml_lines[4]}   # cm/GW']
+                    f'{toml_lines[4]}   # GW/cm2',
+                    f'{toml_lines[5]}   # cm/GW']
         
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write('\n'.join(comments))
@@ -394,8 +404,8 @@ def load_beam(data_structure):
         root = tk.Tk()
         root.attributes('-topmost', True)
         root.withdraw()
-        data_structure.beam_directory = filedialog.askopenfilename(title='Select Config File', initialdir=data_structure.folder, filetypes=[("TOML files", "*.toml")], parent=root)
-        with open(data_structure.beam_directory, 'r') as file:
+        beam_directory = filedialog.askopenfilename(title='Select Config File', filetypes=[("TOML files", "*.toml")], parent=root)
+        with open(beam_directory, 'r') as file:
             config = toml.load(file)
             data_structure.w0 = config['Beam Profile Fitting']['w0'][0]
             data_structure.zR = config['Beam Profile Fitting']['zR'][0]
