@@ -74,8 +74,8 @@ with st.container(border=True):
 
     # Initial Guess
     with col1:
-            options = ['z0', 'Is1', 'Is2', 'beta']
-            units = {'z0': 'cm', 'Is1': 'GW/cm$^2$', 'Is2':'GW/cm$^2$', 'beta': 'cm/GW'}
+            options = ['z0', 'alpha', 'Is1', 'Is2', 'beta'] # All possible fit paramters
+            units = {'z0': 'cm', 'Is1': 'GW/cm$^2$', 'Is2':'GW/cm$^2$', 'beta': 'cm/GW', 'alpha':'cm$^{-1}$'}   # The units of the corresponding parameters
 
             with st.container(border=True):
                 st.header('Initial Guess', anchor=False)
@@ -126,11 +126,12 @@ with st.container(border=True):
             else:
                 string = f"""
                     z$_0$ = {na_option[0]:.3f} ± {df.errorbars[0]:.3f} cm | span: {df.chi2span[0]:.3f}\\
+                    α$_0$ = {na_option[4]:.3f} ± {df.errorbars[4]:.3f} cm$^{-1}$ | span: {df.chi2span[4]:.3f}\\    
                     Is$_1$ = {na_option[1]:.3e} ± {df.errorbars[1]:.3e} GW/cm$^{2}$ | span: {df.chi2span[1]:.1e}\\
                     Is$_2$ = {na_option[2]:.3e} ± {df.errorbars[2]:.3e} GW/cm$^{2}$ | span: {df.chi2span[2]:.1e}\\
                     β = {na_option[3]:.3e} ± {df.errorbars[3]:.3e} cm/GW | span: {df.chi2span[3]:.1e}\\
                     \\
-                    α/β = {df.ui['alpha0']/na_option[3]:.3e} GW/cm$^{2}$
+                    α/β = {na_option[4]/na_option[3]:.3e} GW/cm$^{2}$
                     """
             finally:
                 st.write(string)

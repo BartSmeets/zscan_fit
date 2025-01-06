@@ -13,9 +13,9 @@ class data_structure:
     def __init__(self):
         self.folder = os.environ.get('HOMEPATH')
         self.ui = {'L':.1, 'alpha0':44.67, 'E':3.55}
-        self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False}
-        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0}
-        self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308]}
+        self.type = {'z0': False, 'Is1':False, 'Is2':False, 'beta':False, 'alpha':False}
+        self.p0 = {'z0': 0.0, 'Is1':0.1, 'Is2':1e308, 'beta':0.0, 'alpha':40}
+        self.bounds = {'z0': [-1.797e308, 1.797e308], 'Is1':[1.797e-308, 1.797e308], 'Is2':[1.797e-308, 1.797e308], 'beta':[0, 1.797e308], 'alpha':[0, 1.797e308]}
         self.model_parameters = {'Number Runs': 5, 'Max Perturbation': 2, 'Max Iterations': 500, 'Max Age': 50, 'T':0.8, 'Max Jump':5, 'Max Reject':5}
         self.w0 = 10.    # um
         self.zR = 500.   # um
@@ -170,32 +170,31 @@ class data_structure:
             transmittance = (I_out / I_in) / (I_out[0] / I_in[0])
         return transmittance
     
-    def dI_dz(self, z, I, x0, x1, x2, x3):
-                term1 = - self.ui['alpha0'] / (1 + (I/x1)) * I
+    def dI_dz(self, z, I, x0, x1, x2, x3, x4):
+                term1 = - x4 / (1 + (I/x1)) * I
                 term2 = - x3 / (1 + (I/x2)) * I**2
                 return term1 + term2
     
 
     def errorbar(self):
         # Initialise datastructure
-        N_POINTS = len(self.z)
-        N_PARAM = np.sum(list(self.type.values()))
-        MAX_ITER = 1e3
-        STEP = 0.005
+        N_TOT = 5   # Total amount of parameters (if all in use)
+        MAX_ITER = 1e3  # Total number of allowed iterations
+        STEP = 0.005    # Perturbation step size
 
-        p = 0.1
+        p = 0.1 # Threshold: 10% deviation from optimal chi2
         CHI2_COMPARISON = (1+p) * self.chi2Best
-        self.errorbars = np.zeros(4)
-        self.chi2span = np.zeros(4)
+        self.errorbars = np.zeros(N_TOT)
+        self.chi2span = np.zeros(N_TOT)
         na_option = np.array(self.na_option)
 
 
-        for i in range(4):
+        for i in range(N_TOT):
             if not list(self.type.values())[i]:
                 continue
 
-            lBound = [na_option[i], 0]
-            rBound = [na_option[i], 0]
+            lBound = [na_option[i], 0]  # Index 0: Parameter adjusted up; Index 1: Corresponding chi2
+            rBound = [na_option[i], 0]  # Index 0: Parameter adjusted down; Index 1: Corresponding chi2
             lTest = np.array(self.pBest)
             rTest = np.array(self.pBest)
 
@@ -204,6 +203,8 @@ class data_structure:
             iteration = 0
             while newChi2 < CHI2_COMPARISON and iteration < MAX_ITER:
                 iteration += 1
+                
+                ## Perturb parameter for testing
                 rBound[0] *= (1+STEP)
                 lBound[0] *= (1-STEP)
                 rTest = rBound[0]
