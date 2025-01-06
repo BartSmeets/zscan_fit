@@ -110,7 +110,7 @@ class data_structure:
 
             #### Minimise Chi2
             print(f'{niter}, {bestAge}, minimize')
-            popt = minimize(fitting_model, x0=pPerturbation, bounds=bounds)
+            popt = minimize(fitting_model, x0=pPerturbation, bounds=bounds, method='Nelder-Mead')
             p_newMin = popt.x
             print(f'{niter}, {bestAge}, chi2')
             X2 = fitting_model(p_newMin)
