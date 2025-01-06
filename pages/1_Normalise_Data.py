@@ -40,7 +40,7 @@ with st.container(border = True):
             try:
                 df.load()
             except ValueError as e:
-                st.error(e)
+                #st.error(e)
                 df.names = []    # Reset the loaded names
                 error = 'Data sets do not have the same number of data points.\
                          This is currently not supported.'
@@ -61,7 +61,8 @@ with st.container(border = True):
 
     # Select focal point position
     for name in df.names:
-        st.session_state['z0'][name] = st.number_input(f'z$_0$ of {name}', value=0.0)
+        st.session_state['z0'][name] = st.number_input(f'z$_0$ of {name}', value=0.000, format='%.3f')
+    df.focal_point()
 
     # Print error if any
     if 'error' in locals():

@@ -108,6 +108,7 @@ class data_structure:
         
         # Average
         average = np.average(self.df_norm, 0)
+        self.z_avg = average[:, 0]
         # Error
         ## Mean absolute error is less sentisitive to outliers
         MAE = np.mean(np.abs(self.df_norm[:, :, 1:] - average[:, 1:]), axis=0).T
@@ -171,8 +172,8 @@ class data_structure:
                 ax[0, 0].errorbar(self.df_norm[i, :, 0], self.df_norm[i, :, 2], self.CA_norm[1], fmt='.', label=name)
 
         # Plot average of measurements
-        ax[1, 0].errorbar(self.z, self.OA_norm[0], self.OA_norm[1],fmt= '.')
-        ax[1, 1].errorbar(self.z, self.CA_norm[0], self.CA_norm[1], fmt='.')
+        ax[1, 0].errorbar(self.z_avg, self.OA_norm[0], self.OA_norm[1],fmt= '.')
+        ax[1, 1].errorbar(self.z_avg, self.CA_norm[0], self.CA_norm[1], fmt='.')
 
         # Draw baseline at 1
         for i, j in np.ndindex(ax.shape):
@@ -225,13 +226,13 @@ class data_structure:
         
         # Intialise Open Aperture Data
         OA_export = np.ndarray((len(self.z), 3))    # 0: z-position; 1: average OA; 2: errorbar
-        OA_export[:, 0] = self.z
+        OA_export[:, 0] = self.z_avg
         OA_export[:, 1] = self.OA_norm[0]
         OA_export[:, 2] = self.OA_norm[1]
 
         # Intialise Closed Aperture Data
         CA_export = np.ndarray((len(self.z), 3))    # 0: z-position; 1: average OA; 2: errorbar
-        CA_export[:, 0] = self.z
+        CA_export[:, 0] = self.z_avg
         CA_export[:, 1] = self.CA_norm[0]
         CA_export[:, 2] = self.CA_norm[1]
 
@@ -265,6 +266,13 @@ class data_structure:
         
         # Open output folder
         st.success("Data Exported Succesfully")
+
+    def focal_point(self):
+        for i, name in enumerate(self.names):
+            print(st.session_state['z0'][name])
+            self.df[i, :, 0] = self.z - st.session_state['z0'][name]
+        self.update()
+
 
 def select(data_structure):
         '''
