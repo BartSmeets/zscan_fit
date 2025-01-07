@@ -35,9 +35,10 @@ with col01:
         st.header('User Inputs', anchor=False)
         col1, col2 = st.columns(2)
         with col1:
-            df.ui['L'] = st.number_input('L (cm)', value=df.ui['L'])
+            df.ui['L'] = st.number_input('L (cm)', value=0.1)
         with col2:
-            df.ui['E'] = st.number_input('E$_{pulse}$ (μJ)', value=df.ui['E'])
+            df.ui['E'] = st.number_input('E$_{pulse}$ (μJ)', value=3.5)
+            df.update_I0()
         # Directory
         st.write('Data Directory')
         col1, col2 = st.columns([5,1])
