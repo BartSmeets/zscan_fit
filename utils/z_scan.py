@@ -19,12 +19,11 @@ class data_structure:
         self.w0 = 10.    # um
         self.zR = 500.   # um
         self.plot_type = 'default'
-
+        
         # Calculate I0 from values
         PULSE_WIDTH = 6e-9  # s
         P_laser = self.ui['E']*1e-6 / PULSE_WIDTH   # J/s
         self.I0 = 2*P_laser / (np.pi * (self.w0*1e-4)**2)*1e-9   # GW/cm2
-        
 
     def run(self):
         # Initialise
@@ -372,6 +371,12 @@ class data_structure:
         # Write the TOML string to the file
         with open(export_directory + '/RESULTS_ZSCAN.toml', 'a') as f:
             f.write(toml_string)
+
+    def update_I0(self):
+        # Calculate I0 from values
+        PULSE_WIDTH = 6e-9  # s
+        P_laser = self.ui['E']*1e-6 / PULSE_WIDTH   # J/s
+        self.I0 = 2*P_laser / (np.pi * (self.w0*1e-4)**2)*1e-9   # GW/cm2
 
 def select(data_structure):
     '''
